@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 # -----------------------------------------------------------------------------
-# stream-loader.py Loader for streaming input.
+# stream-logger.py Logger of streaming input.
 # -----------------------------------------------------------------------------
 
 from glob import glob
@@ -25,18 +25,6 @@ import sys
 import threading
 import time
 
-# Import Senzing libraries.
-
-try:
-    from G2Config import G2Config
-    from G2ConfigMgr import G2ConfigMgr
-    from G2Diagnostic import G2Diagnostic
-    from G2Engine import G2Engine
-    from G2Product import G2Product
-    import G2Exception
-except ImportError:
-    pass
-
 __all__ = []
 __version__ = "1.0.0"  # See https://www.python.org/dev/peps/pep-0396/
 __date__ = '2020-02-06'
@@ -54,31 +42,10 @@ GIGABYTES = 1024 * MEGABYTES
 MINIMUM_TOTAL_MEMORY_IN_GIGABYTES = 8
 MINIMUM_AVAILABLE_MEMORY_IN_GIGABYTES = 6
 
-# Lists from https://www.ietf.org/rfc/rfc1738.txt
-
-safe_character_list = ['$', '-', '_', '.', '+', '!', '*', '(', ')', ',', '"' ] + list(string.ascii_letters)
-unsafe_character_list = [ '"', '<', '>', '#', '%', '{', '}', '|', '\\', '^', '~', '[', ']', '`']
-reserved_character_list = [ ';', ',', '/', '?', ':', '@', '=', '&']
-
 # The "configuration_locator" describes where configuration variables are in:
 # 1) Command line options, 2) Environment variables, 3) Configuration files, 4) Default values
 
 configuration_locator = {
-    "config_path": {
-        "default": "/etc/opt/senzing",
-        "env": "SENZING_CONFIG_PATH",
-        "cli": "config-path"
-    },
-    "configuration_check_frequency_in_seconds": {
-        "default": 60,
-        "env": "SENZING_CONFIGURATION_CHECK_FREQUENCY",
-        "cli": "configuration-check-frequency"
-    },
-    "data_source": {
-        "default": None,
-        "env": "SENZING_DATA_SOURCE",
-        "cli": "data-source"
-    },
     "debug": {
         "default": False,
         "env": "SENZING_DEBUG",
@@ -88,36 +55,6 @@ configuration_locator = {
         "default": 0,
         "env": "SENZING_DELAY_IN_SECONDS",
         "cli": "delay-in-seconds"
-    },
-    "engine_configuration_json": {
-        "default": None,
-        "env": "SENZING_ENGINE_CONFIGURATION_JSON",
-        "cli": "engine-configuration-json"
-    },
-    "entity_type": {
-        "default": None,
-        "env": "SENZING_ENTITY_TYPE",
-        "cli": "entity-type"
-    },
-    "expiration_warning_in_days": {
-        "default": 30,
-        "env": "SENZING_EXPIRATION_WARNING_IN_DAYS",
-        "cli": "expiration-warning-in-days"
-    },
-    "g2_configuration_file": {
-        "default": "/opt/senzing/g2/python/g2config.json",
-        "env": "SENZING_G2_CONFIGURATION_FILE",
-        "cli": "g2-configuration-file"
-    },
-    "g2_database_url_generic": {
-        "default": "sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db",
-        "env": "SENZING_DATABASE_URL",
-        "cli": "database-url"
-    },
-    "input_url": {
-        "default": None,
-        "env": "SENZING_INPUT_URL",
-        "cli": "input-url"
     },
     "kafka_bootstrap_server": {
         "default": "localhost:9092",
@@ -259,18 +196,6 @@ configuration_locator = {
 # Enumerate keys in 'configuration_locator' that should not be printed to the log.
 
 keys_to_redact = [
-    "counter_bad_records",
-    "counter_processed_records",
-    "counter_queued_records",
-    "g2_database_url_generic",
-    "g2_database_url_specific",
-    "kafka_ack_elapsed",
-    "kafka_poll_elapsed",
-    "rabbitmq_ack_elapsed",
-    "rabbitmq_failure_password",
-    "rabbitmq_info_password",
-    "rabbitmq_password",
-    "rabbitmq_poll_elapsed",
 ]
 
 # -----------------------------------------------------------------------------
@@ -285,11 +210,6 @@ def get_parser():
         'kafka': {
             "help": 'Read JSON Lines from Apache Kafka topic.',
             "arguments": {
-                "--data-source": {
-                    "dest": "data_source",
-                    "metavar": "SENZING_DATA_SOURCE",
-                    "help": "Data Source."
-                },
                 "--debug": {
                     "dest": "debug",
                     "action": "store_true",
@@ -299,16 +219,6 @@ def get_parser():
                     "dest": "delay_in_seconds",
                     "metavar": "SENZING_DELAY_IN_SECONDS",
                     "help": "Delay before processing in seconds. DEFAULT: 0"
-                },
-                "--engine-configuration-json": {
-                    "dest": "engine_configuration_json",
-                    "metavar": "SENZING_ENGINE_CONFIGURATION_JSON",
-                    "help": "Advanced Senzing engine configuration. Default: none"
-                },
-                "--entity-type": {
-                    "dest": "entity_type",
-                    "metavar": "SENZING_ENTITY_TYPE",
-                    "help": "Entity type."
                 },
                 "--kafka-bootstrap-server": {
                     "dest": "kafka_bootstrap_server",
@@ -350,11 +260,6 @@ def get_parser():
         'rabbitmq': {
             "help": 'Read JSON Lines from RabbitMQ queue.',
             "arguments": {
-                "--data-source": {
-                    "dest": "data_source",
-                    "metavar": "SENZING_DATA_SOURCE",
-                    "help": "Data Source."
-                },
                 "--debug": {
                     "dest": "debug",
                     "action": "store_true",
@@ -364,16 +269,6 @@ def get_parser():
                     "dest": "delay_in_seconds",
                     "metavar": "SENZING_DELAY_IN_SECONDS",
                     "help": "Delay before processing in seconds. DEFAULT: 0"
-                },
-                "--engine-configuration-json": {
-                    "dest": "engine_configuration_json",
-                    "metavar": "SENZING_ENGINE_CONFIGURATION_JSON",
-                    "help": "Advanced Senzing engine configuration. Default: none"
-                },
-                "--entity-type": {
-                    "dest": "entity_type",
-                    "metavar": "SENZING_ENTITY_TYPE",
-                    "help": "Entity type."
                 },
                 "--monitoring-period-in-seconds": {
                     "dest": "monitoring_period_in_seconds",
@@ -432,56 +327,6 @@ def get_parser():
                 },
             },
         },
-        'url': {
-            "help": 'Read JSON Lines from URL-addressable file.',
-            "arguments": {
-                "--data-source": {
-                    "dest": "data_source",
-                    "metavar": "SENZING_DATA_SOURCE",
-                    "help": "Data Source."
-                },
-                "--debug": {
-                    "dest": "debug",
-                    "action": "store_true",
-                    "help": "Enable debugging. (SENZING_DEBUG) Default: False"
-                },
-                "--delay-in-seconds": {
-                    "dest": "delay_in_seconds",
-                    "metavar": "SENZING_DELAY_IN_SECONDS",
-                    "help": "Delay before processing in seconds. DEFAULT: 0"
-                },
-                "--engine-configuration-json": {
-                    "dest": "engine_configuration_json",
-                    "metavar": "SENZING_ENGINE_CONFIGURATION_JSON",
-                    "help": "Advanced Senzing engine configuration. Default: none"
-                },
-                "--entity-type": {
-                    "dest": "entity_type",
-                    "metavar": "SENZING_ENTITY_TYPE",
-                    "help": "Entity type."
-                },
-                "-input-url": {
-                    "dest": "input_url",
-                    "metavar": "SENZING_INPUT_URL",
-                    "help": "URL to file of JSON lines."
-                },
-                "--monitoring-period-in-seconds": {
-                    "dest": "monitoring_period_in_seconds",
-                    "metavar": "SENZING_MONITORING_PERIOD_IN_SECONDS",
-                    "help": "Period, in seconds, between monitoring reports. Default: 300"
-                },
-                "--senzing-dir": {
-                    "dest": "senzing_dir",
-                    "metavar": "SENZING_DIR",
-                    "help": "Location of Senzing. Default: /opt/senzing"
-                },
-                "--threads-per-process": {
-                    "dest": "threads_per_process",
-                    "metavar": "SENZING_THREADS_PER_PROCESS",
-                    "help": "Number of threads per process. Default: 4"
-                },
-            },
-        },
         'version': {
             "help": 'Print version of program.',
         },
@@ -490,7 +335,7 @@ def get_parser():
         },
     }
 
-    parser = argparse.ArgumentParser(prog="stream-loader.py", description="Load Senzing from a stream. For more information, see https://github.com/senzing/stream-loader")
+    parser = argparse.ArgumentParser(prog="stream-logger.py", description="Log contents from a stream. For more information, see https://github.com/senzing/stream-logger")
     subparsers = parser.add_subparsers(dest='subcommand', help='Subcommands (SENZING_SUBCOMMAND):')
 
     for subcommand_key, subcommand_values in subcommands.items():
@@ -563,7 +408,7 @@ message_dictionary = {
     "202": "Non-fatal exception on Line {0}: {1} Error: {2}",
     "203": "          WARNING: License will expire soon. Only {0} days left.",
     "292": "Configuration change detected.  Old: {0} New: {1}",
-    "293": "For information on warnings and errors, see https://github.com/Senzing/stream-loader#errors",
+    "293": "For information on warnings and errors, see https://github.com/Senzing/stream-logger#errors",
     "294": "Version: {0}  Updated: {1}",
     "295": "Sleeping infinitely.",
     "296": "Sleeping {0} seconds.",
@@ -579,11 +424,9 @@ message_dictionary = {
     "499": "{0}",
     "500": "senzing-" + SENZING_PRODUCT_ID + "{0:04d}E",
     "551": "Missing G2 database URL.",
-    "552": "SENZING_DATA_SOURCE not set.",
-    "553": "SENZING_ENTITY_TYPE not set.",
     "554": "Running with less than the recommended total memory of {0} GiB.",
     "555": "Running with less than the recommended available memory of {0} GiB.",
-    "556": "SENZING_KAFKA_BOOTSTRAP_SERVER not set. See ./stream-loader.py kafka --help.",
+    "556": "SENZING_KAFKA_BOOTSTRAP_SERVER not set. See ./stream-logger.py kafka --help.",
     "557": "Invalid JSON received: {0}",
     "558": "LD_LIBRARY_PATH environment variable not set.",
     "559": "PYTHONPATH environment variable not set.",
@@ -751,8 +594,6 @@ def validate_configuration(config):
     user_warning_messages = []
     user_error_messages = []
 
-    if not config.get('g2_database_url_generic'):
-        user_error_messages.append(message_error(551))
 
     # Perform subcommand specific checking.
 
@@ -770,14 +611,6 @@ def validate_configuration(config):
 
         if config.get('processes') > 1:
             user_error_messages.append(message_error(560, config.get('processes')))
-
-    if subcommand in ['stdin']:
-
-        if not config.get('data_source'):
-            user_warning_messages.append(message_warning(552))
-
-        if not config.get('entity_type'):
-            user_warning_messages.append(message_warning(553))
 
     if subcommand in ['kafka']:
 
