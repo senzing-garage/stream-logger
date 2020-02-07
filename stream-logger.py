@@ -33,15 +33,6 @@ __updated__ = '2020-02-06'
 SENZING_PRODUCT_ID = "5011"  # See https://github.com/Senzing/knowledge-base/blob/master/lists/senzing-product-ids.md
 log_format = '%(asctime)s %(message)s'
 
-# Working with bytes.
-
-KILOBYTES = 1024
-MEGABYTES = 1024 * KILOBYTES
-GIGABYTES = 1024 * MEGABYTES
-
-MINIMUM_TOTAL_MEMORY_IN_GIGABYTES = 8
-MINIMUM_AVAILABLE_MEMORY_IN_GIGABYTES = 6
-
 # The "configuration_locator" describes where configuration variables are in:
 # 1) Command line options, 2) Environment variables, 3) Configuration files, 4) Default values
 
@@ -71,80 +62,25 @@ configuration_locator = {
         "env": "SENZING_KAFKA_TOPIC",
         "cli": "kafka-topic"
     },
-    "ld_library_path": {
-        "env": "LD_LIBRARY_PATH"
-    },
-    "log_license_period_in_seconds": {
-        "default": 60 * 60 * 24,
-        "env": "SENZING_LOG_LICENSE_PERIOD_IN_SECONDS",
-        "cli": "log-license-period-in-seconds"
-    },
     "monitoring_period_in_seconds": {
         "default": 60 * 10,
         "env": "SENZING_MONITORING_PERIOD_IN_SECONDS",
         "cli": "monitoring-period-in-seconds",
-    },
-    "processes": {
-        "default": 1,
-        "env": "SENZING_PROCESSES",
-        "cli": "processes",
-    },
-    "python_path": {
-        "env": "PYTHONPATH"
-    },
-    "queue_maxsize": {
-        "default": 10,
-        "env": "SENZING_QUEUE_MAX",
-    },
-    "rabbitmq_failure_host": {
-        "default": None,
-        "env": "SENZING_RABBITMQ_FAILURE_HOST",
-        "cli": "rabbitmq-failure-host",
-    },
-    "rabbitmq_failure_password": {
-        "default": None,
-        "env": "SENZING_RABBITMQ_FAILURE_PASSWORD",
-        "cli": "rabbitmq-failure-password",
-    },
-    "rabbitmq_failure_queue": {
-        "default": "senzing-rabbitmq-failure-queue",
-        "env": "SENZING_RABBITMQ_FAILURE_QUEUE",
-        "cli": "rabbitmq-failure-queue",
-    },
-    "rabbitmq_failure_username": {
-        "default": None,
-        "env": "SENZING_RABBITMQ_FAILURE_USERNAME",
-        "cli": "rabbitmq-failure-username",
     },
     "rabbitmq_host": {
         "default": "localhost:5672",
         "env": "SENZING_RABBITMQ_HOST",
         "cli": "rabbitmq-host",
     },
-    "rabbitmq_info_host": {
-        "default": None,
-        "env": "SENZING_RABBITMQ_INFO_HOST",
-        "cli": "rabbitmq-info-host",
-    },
-    "rabbitmq_info_password": {
-        "default": None,
-        "env": "SENZING_RABBITMQ_INFO_PASSWORD",
-        "cli": "rabbitmq-info-password",
-    },
-    "rabbitmq_info_queue": {
-        "default": "senzing-rabbitmq-info-queue",
-        "env": "SENZING_RABBITMQ_INFO_QUEUE",
-        "cli": "rabbitmq-info-queue",
-    },
-    "rabbitmq_info_username": {
-        "default": None,
-        "env": "SENZING_RABBITMQ_INFO_USERNAME",
-        "cli": "rabbitmq-info-username",
-    },
     "rabbitmq_password": {
         "default": "bitnami",
         "env": "SENZING_RABBITMQ_PASSWORD",
         "cli": "rabbitmq-password",
+    },
+    "rabbitmq_prefetch_count": {
+        "default": 50,
+        "env": "SENZING_RABBITMQ_PREFETCH_COUNT",
+        "cli": "rabbitmq_prefetch_count",
     },
     "rabbitmq_queue": {
         "default": "senzing-rabbitmq-queue",
@@ -156,17 +92,6 @@ configuration_locator = {
         "env": "SENZING_RABBITMQ_USERNAME",
         "cli": "rabbitmq-username",
     },
-
-    "resource_path": {
-        "default": "/opt/senzing/g2/resources",
-        "env": "SENZING_RESOURCE_PATH",
-        "cli": "resource-path"
-    },
-    "senzing_dir": {
-        "default": "/opt/senzing",
-        "env": "SENZING_DIR",
-        "cli": "senzing-dir"
-    },
     "sleep_time_in_seconds": {
         "default": 0,
         "env": "SENZING_SLEEP_TIME_IN_SECONDS",
@@ -176,21 +101,11 @@ configuration_locator = {
         "default": None,
         "env": "SENZING_SUBCOMMAND",
     },
-    "support_path": {
-        "default": "/opt/senzing/data",
-        "env": "SENZING_SUPPORT_PATH",
-        "cli": "support-path"
-    },
     "threads_per_process": {
         "default": 4,
         "env": "SENZING_THREADS_PER_PROCESS",
         "cli": "threads-per-process",
     },
-    "rabbitmq_prefetch_count": {
-        "default": 50,
-        "env": "SENZING_RABBITMQ_PREFETCH_COUNT",
-        "cli": "rabbitmq_prefetch_count",
-    }
 }
 
 # Enumerate keys in 'configuration_locator' that should not be printed to the log.
@@ -240,16 +155,6 @@ def get_parser():
                     "metavar": "SENZING_MONITORING_PERIOD_IN_SECONDS",
                     "help": "Period, in seconds, between monitoring reports. Default: 300"
                 },
-                "--processes": {
-                    "dest": "processes",
-                    "metavar": "SENZING_PROCESSES",
-                    "help": "Number of processes. Default: 1"
-                },
-                "--senzing-dir": {
-                    "dest": "senzing_dir",
-                    "metavar": "SENZING_DIR",
-                    "help": "Location of Senzing. Default: /opt/senzing"
-                },
                 "--threads-per-process": {
                     "dest": "threads_per_process",
                     "metavar": "SENZING_THREADS_PER_PROCESS",
@@ -275,11 +180,6 @@ def get_parser():
                     "metavar": "SENZING_MONITORING_PERIOD_IN_SECONDS",
                     "help": "Period, in seconds, between monitoring reports. Default: 300"
                 },
-                "--processes": {
-                    "dest": "processes",
-                    "metavar": "SENZING_PROCESSES",
-                    "help": "Number of processes. Default: 1"
-                },
                 "--rabbitmq-host": {
                     "dest": "rabbitmq_host",
                     "metavar": "SENZING_RABBITMQ_HOST",
@@ -289,6 +189,11 @@ def get_parser():
                     "dest": "rabbitmq_password",
                     "metavar": "SENZING_RABBITMQ_PASSWORD",
                     "help": "RabbitMQ password. Default: bitnami"
+                },
+                "--rabbitmq-prefetch-count": {
+                    "dest": "rabbitmq_prefetch_count",
+                    "metavar": "SENZING_RABBITMQ_PREFETCH_COUNT",
+                    "help": "RabbitMQ prefetch-count. Default: 50"
                 },
                 "--rabbitmq-queue": {
                     "dest": "rabbitmq_queue",
@@ -300,21 +205,11 @@ def get_parser():
                     "metavar": "SENZING_RABBITMQ_USERNAME",
                     "help": "RabbitMQ username. Default: user"
                 },
-                "--senzing-dir": {
-                    "dest": "senzing_dir",
-                    "metavar": "SENZING_DIR",
-                    "help": "Location of Senzing. Default: /opt/senzing"
-                },
                 "--threads-per-process": {
                     "dest": "threads_per_process",
                     "metavar": "SENZING_THREADS_PER_PROCESS",
                     "help": "Number of threads per process. Default: 4"
                 },
-                "--rabbitmq-prefetch-count": {
-                    "dest": "rabbitmq_prefetch_count",
-                    "metavar": "SENZING_RABBITMQ_PREFETCH_COUNT",
-                    "help": "RabbitMQ prefetch-count. Default: 50"
-                }
             },
         },
         'sleep': {
@@ -367,47 +262,10 @@ message_dictionary = {
     "100": "senzing-" + SENZING_PRODUCT_ID + "{0:04d}I",
     "101": "Received from queue: {0}",
     "120": "Sleeping for requested delay of {0} seconds.",
-    "121": "Adding JSON to failure queue: {0}",
-    "122": "Quitting time!",
-    "123": "Total     memory: {0:>15} bytes",
-    "124": "Available memory: {0:>15} bytes",
-    "125": "G2 engine statistics: {0}",
-    "126": "G2 project statistics: {0}",
     "127": "Monitor: {0}",
-    "128": "Adding JSON to info queue: {0}",
     "129": "{0} is running.",
     "130": "RabbitMQ channel closed by the broker. Shutting down thread {0}.",
-    "140": "System Resources:",
-    "141": "    Physical cores: {0}",
-    "142": "     Logical cores: {0}",
-    "143": "      Total Memory: {0:.1f} GB",
-    "144": "  Available Memory: {0:.1f} GB",
-    "145": "Resource requested:",
-    "146": "                    Processes: {0}",
-    "147": "          Threads per process: {0}",
-    "148": "    Minimum recommended cores: {0}",
-    "149": "   Minimum recommended memory: {0:.1f} GB",
-    "150": "Insertion test: {0} records inserted in {1}ms with an average of {2:.2f}ms per insert.",
-    "151": "For database tuning help, see: https://senzing.zendesk.com/hc/en-us/sections/360000386433-Technical-Database",
     "152": "Sleeping {0} seconds before deploying administrative threads.",
-    "153": "Created datasource {0}. Return code: {1}",
-    "160": "{0} LICENSE {0}",
-    "161": "          Version: {0} ({1})",
-    "162": "         Customer: {0}",
-    "163": "             Type: {0}",
-    "164": "  Expiration date: {0}",
-    "165": "  Expiration time: {0} days until expiration",
-    "166": "          Records: {0}",
-    "167": "         Contract: {0}",
-    "168": "  Expiration time: EXPIRED {0} days ago",
-    "180": "User-supplied Governor loaded from {0}.",
-    "181": "User-supplied InfoFilter loaded from {0}.",
-    "190": "Adding JSON to failure queue: {0}",
-    "191": "Adding JSON to info queue: {0}",
-    "201": "Python 'psutil' not installed. Could not report memory.",
-    "202": "Non-fatal exception on Line {0}: {1} Error: {2}",
-    "203": "          WARNING: License will expire soon. Only {0} days left.",
-    "292": "Configuration change detected.  Old: {0} New: {1}",
     "293": "For information on warnings and errors, see https://github.com/Senzing/stream-logger#errors",
     "294": "Version: {0}  Updated: {1}",
     "295": "Sleeping infinitely.",
@@ -416,28 +274,10 @@ message_dictionary = {
     "298": "Exit {0}",
     "299": "{0}",
     "300": "senzing-" + SENZING_PRODUCT_ID + "{0:04d}W",
-    "401": "Failure queue not open.  Could not add: {0}",
-    "402": "Info queue not open.  Could not add: {0}",
-    "410": "Unknown RabbitMQ error when connecting: {0}.",
-    "411": "Unknown RabbitMQ error when adding record to queue: {0} for line {1}.",
-    "412": "Could not connect to RabbitMQ host at {1}. The host name maybe wrong, it may not be ready, or your credentials are incorrect. See the RabbitMQ log for more details.",
     "499": "{0}",
     "500": "senzing-" + SENZING_PRODUCT_ID + "{0:04d}E",
-    "551": "Missing G2 database URL.",
-    "554": "Running with less than the recommended total memory of {0} GiB.",
-    "555": "Running with less than the recommended available memory of {0} GiB.",
-    "556": "SENZING_KAFKA_BOOTSTRAP_SERVER not set. See ./stream-logger.py kafka --help.",
-    "557": "Invalid JSON received: {0}",
-    "558": "LD_LIBRARY_PATH environment variable not set.",
-    "559": "PYTHONPATH environment variable not set.",
-    "560": "SENZING_PROCESSES for 'url' subcommand must be 1. Currently set to {0}.",
     "561": "Unknown RabbitMQ error when connecting: {0}.",
     "562": "Could not connect to RabbitMQ host at {1}. The host name maybe wrong, it may not be ready, or your credentials are incorrect. See the RabbitMQ log for more details. Error: {0}",
-    "563": "Could not perform database performance test.",
-    "564": "Database performance of {0:.2f}ms per insert is slower than the recommended minimum performance of {1:.2f}ms per insert",
-    "565": "System has {0} cores which is less than the recommended minimum of {1} cores for this configuration.",
-    "566": "System has {0:.1f} GB memory which is less than the recommended minimum of {1:.1f} GB memory",
-    "695": "Unknown database scheme '{0}' in database url '{1}'",
     "696": "Bad SENZING_SUBCOMMAND: {0}.",
     "697": "No processing done.",
     "698": "Program terminated with error.",
@@ -445,31 +285,9 @@ message_dictionary = {
     "700": "senzing-" + SENZING_PRODUCT_ID + "{0:04d}E",
     "721": "Running low on workers.  May need to restart",
     "722": "Kafka commit failed for {0}",
-    "726": "Could not do performance test. G2 Translation error. Error: {0}",
-    "727": "Could not do performance test. G2 module initialization error. Error: {0}",
-    "728": "Could not do performance test. G2 generic exception. Error: {0}",
-    "730": "There are not enough safe characters to do the translation. Unsafe Characters: {0}; Safe Characters: {1}",
-    "885": "License has expired.",
-    "886": "G2Engine.addRecord() bad return code: {0}; JSON: {1}",
-    "888": "G2Engine.addRecord() G2ModuleNotInitialized: {0}; JSON: {1}",
-    "889": "G2Engine.addRecord() G2ModuleGenericException: {0}; JSON: {1}",
-    "890": "G2Engine.addRecord() Exception: {0}; JSON: {1}",
-    "891": "Original and new database URLs do not match. Original URL: {0}; Reconstructed URL: {1}",
-    "892": "Could not initialize G2Product with '{0}'. Error: {1}",
-    "893": "Could not initialize G2Hasher with '{0}'. Error: {1}",
-    "894": "Could not initialize G2Diagnostic with '{0}'. Error: {1}",
-    "895": "Could not initialize G2Audit with '{0}'. Error: {1}",
-    "896": "Could not initialize G2ConfigMgr with '{0}'. Error: {1}",
-    "897": "Could not initialize G2Config with '{0}'. Error: {1}",
-    "898": "Could not initialize G2Engine with '{0}'. Error: {1}",
     "899": "{0}",
     "900": "senzing-" + SENZING_PRODUCT_ID + "{0:04d}D",
-    "901": "Queued: {0}",
-    "902": "Processed: {0}",
-    "903": "{0} queued: {1}",
     "904": "{0} processed: {1}",
-    "905": "{0} Kafka read: {1} Kafka commit: {2}",
-    "906": "{0} RabbitMQ read: {1} RabbitMQ ack: {2}",
     "999": "{0}",
 }
 
@@ -575,7 +393,7 @@ def get_configuration(args):
     # Special case: Change integer strings to integers.
 
     integers = [
-        'configuration_check_frequency_in_seconds',
+        "delay_in_seconds",
     ]
     for integer in integers:
         integer_string = result.get(integer)
@@ -594,28 +412,12 @@ def validate_configuration(config):
     user_warning_messages = []
     user_error_messages = []
 
-
     # Perform subcommand specific checking.
 
     subcommand = config.get('subcommand')
 
-    if subcommand in ['kafka', 'stdin', 'url']:
-
-        if not config.get('ld_library_path'):
-            user_error_messages.append(message_error(558))
-
-        if not config.get('python_path'):
-            user_error_messages.append(message_error(559))
-
-    if subcommand in ['stdin', 'url']:
-
-        if config.get('processes') > 1:
-            user_error_messages.append(message_error(560, config.get('processes')))
-
-    if subcommand in ['kafka']:
-
-        if not config.get('kafka_bootstrap_server'):
-            user_error_messages.append(message_error(556))
+    if subcommand in ['rabbitmq', 'kafka']:
+        pass
 
     # Log warning messages.
 
@@ -710,7 +512,7 @@ class ReadKafkaThread(WriteG2Thread):
             kafka_message_string = kafka_message.value().strip()
             if not kafka_message_string:
                 continue
-            logging.debug(message_debug(903, threading.current_thread().name, kafka_message_string))
+            logging.debug(message_debug(904, threading.current_thread().name, kafka_message_string))
             self.config['counter_processed_messages'] += 1
             logging.info(message_info(101, kafka_message_string))
             consumer.commit()
@@ -728,7 +530,7 @@ class ReadRabbitMQThread(ReadThread):
         super().__init__(config)
 
     def callback(self, channel, method, header, body):
-        logging.debug(message_debug(903, threading.current_thread().name, body))
+        logging.debug(message_debug(904, threading.current_thread().name, body))
         self.config['counter_processed_messages'] += 1
         logging.info(message_info(101, body))
         channel.basic_ack(delivery_tag=method.delivery_tag)
@@ -949,13 +751,7 @@ def do_kafka(args):
 
     # Pull values from configuration.
 
-    number_of_processes = config.get('processes')
     threads_per_process = config.get('threads_per_process')
-
-    # Get the Senzing G2 resources.
-
-    g2_engine = get_g2_engine(config)
-    g2_configuration_manager = get_g2_configuration_manager(config)
 
     # Create kafka reader threads for master process.
 
@@ -988,19 +784,6 @@ def do_kafka(args):
 
     for thread in adminThreads:
         thread.start()
-
-    # Start additional processes. (if 2 or more processes are requested.)
-
-    processes = []
-    for i in range(1, number_of_processes):  # Tricky: 1, not 0 because master process is first process.
-        process = KafkaProcess(config, g2_engine)
-        process.start()
-        processes.append(process)
-
-    # Collect inactive processes.
-
-    for process in processes:
-        process.join()
 
     # Collect inactive threads from master process.
 
@@ -1035,11 +818,6 @@ def do_rabbitmq(args):
 
     threads_per_process = config.get('threads_per_process')
 
-    # Get the Senzing G2 resources.
-
-    g2_engine = get_g2_engine(config)
-    g2_configuration_manager = get_g2_configuration_manager(config)
-
     # Create RabbitMQ reader threads for master process.
 
     threads = []
@@ -1071,19 +849,6 @@ def do_rabbitmq(args):
 
     for thread in adminThreads:
         thread.start()
-
-    # Start additional processes. (if 2 or more processes are requested.)
-
-    processes = []
-    for i in range(1, number_of_processes):  # Tricky: 1, not 0 because master process is first process.
-        process = RabbitMQProcess(config, g2_engine)
-        process.start()
-        processes.append(process)
-
-    # Collect inactive processes.
-
-    for process in processes:
-        process.join()
 
     # Collect inactive threads from master process.
 
@@ -1125,47 +890,6 @@ def do_sleep(args):
         while True:
             logging.info(message_info(295))
             time.sleep(sleep_time_in_seconds)
-
-    # Epilog.
-
-    logging.info(exit_template(config))
-
-
-def do_url(args):
-    '''Read from URL-addressable file.'''
-
-    # Get context from CLI, environment variables, and ini files.
-
-    config = get_configuration(args)
-
-    # Perform common initialization tasks.
-
-    logging.info(entry_template(config))
-
-    # If requested, delay start.
-
-    delay(config)
-
-    # Pull values from configuration.
-
-    number_of_processes = config.get('processes')
-    queue_maxsize = config.get('queue_maxsize')
-
-    # Create Queue.
-
-    work_queue = multiprocessing.Queue(queue_maxsize)
-
-    # Start processes.
-
-    processes = []
-    for i in range(0, number_of_processes):
-        process = UrlProcess(config, work_queue)
-        process.start()
-
-    # Collect inactive processes.
-
-    for process in processes:
-        process.join()
 
     # Epilog.
 
