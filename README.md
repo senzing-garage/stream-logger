@@ -2,29 +2,31 @@
 
 ## Overview
 
-The [stream-logger.py](stream-logger.py) python script consumes data from various sources (Kafka, URLs) and publishes it to Senzing.
+The [stream-logger.py](stream-logger.py) python script consumes data
+from various stream sources (Kafka, RabbitMQ) and logs it.
+This is mostly used for testing the contents of of a queue.
 The `senzing/stream-logger` docker image is a wrapper for use in docker formations (e.g. docker-compose, kubernetes).
 
 To see all of the subcommands, run:
 
 ```console
 $ ./stream-logger.py --help
-usage: stream-logger.py [-h] {kafka,sleep,url,version,kafka-test} ...
+usage: stream-logger.py [-h]
+                        {kafka,rabbitmq,sleep,version,docker-acceptance-test}
+                        ...
 
-Load Senzing from a stream. For more information, see
+Log contents from a stream. For more information, see
 https://github.com/senzing/stream-logger
 
 positional arguments:
-  {kafka,sleep,url,version,kafka-test}
+  {kafka,rabbitmq,sleep,version,docker-acceptance-test}
                         Subcommands (SENZING_SUBCOMMAND):
     kafka               Read JSON Lines from Apache Kafka topic.
-    sleep               Do nothing but sleep. For Docker testing.
-    url                 Read JSON Lines from URL-addressable file.
-    version             Print version of stream-logger.py.
-    kafka-test          Read JSON Lines from Apache Kafka topic. Do not send
-                        to Senzing.
     rabbitmq            Read JSON Lines from RabbitMQ queue.
-    rabbitmq-test       Read JSON Lines from RabbitMQ. Do not send to Senzing.
+    sleep               Do nothing but sleep. For Docker testing.
+    version             Print version of program.
+    docker-acceptance-test
+                        For Docker acceptance testing.
 
 optional arguments:
   -h, --help            show this help message and exit

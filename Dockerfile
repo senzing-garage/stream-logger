@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=senzing/senzing-base:1.4.0
+ARG BASE_IMAGE=debian:10.2
 FROM ${BASE_IMAGE}
 
 ENV REFRESHED_AT=2020-02-06
@@ -15,18 +15,20 @@ USER root
 
 # Install packages via apt.
 
-RUN apt-get update \
- && apt-get -y install \
-    librdkafka-dev \
+RUN apt update \
+ && apt -y install \
+      python3-dev \
+      python3-pip \
+      librdkafka-dev \
  && rm -rf /var/lib/apt/lists/*
 
 # Install packages via PIP.
 
 RUN pip3 install \
-    configparser \
-    confluent-kafka \
-    psutil \
-    pika
+      configparser \
+      confluent-kafka \
+      psutil \
+      pika
 
 # Copy files from repository.
 

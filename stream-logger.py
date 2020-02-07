@@ -260,7 +260,7 @@ MESSAGE_DEBUG = 900
 
 message_dictionary = {
     "100": "senzing-" + SENZING_PRODUCT_ID + "{0:04d}I",
-    "101": "Received from queue: {0}",
+    "101": "{0}",
     "120": "Sleeping for requested delay of {0} seconds.",
     "127": "Monitor: {0}",
     "129": "{0} is running.",
@@ -394,6 +394,8 @@ def get_configuration(args):
 
     integers = [
         "delay_in_seconds",
+        "monitoring_period_in_seconds",
+        "threads_per_process",
     ]
     for integer in integers:
         integer_string = result.get(integer)
@@ -466,7 +468,7 @@ class ReadThread(threading.Thread):
 # -----------------------------------------------------------------------------
 
 
-class ReadKafkaThread(WriteG2Thread):
+class ReadKafkaThread(ReadThread):
 
     def __init__(self, config):
         super().__init__(config)
@@ -530,9 +532,10 @@ class ReadRabbitMQThread(ReadThread):
         super().__init__(config)
 
     def callback(self, channel, method, header, body):
-        logging.debug(message_debug(904, threading.current_thread().name, body))
+        jsonline = body.decode()
+        logging.debug(message_debug(904, threading.current_thread().name, jsonline))
         self.config['counter_processed_messages'] += 1
-        logging.info(message_info(101, body))
+        logging.info(message_info(101, jsonline))
         channel.basic_ack(delivery_tag=method.delivery_tag)
 
     def run(self):
@@ -576,7 +579,7 @@ class ReadRabbitMQThread(ReadThread):
 
 class MonitorThread(threading.Thread):
 
-    def __init__(self, config, g2_engine, workers):
+    def __init__(self, config, workers):
         threading.Thread.__init__(self)
         self.config = config
         self.workers = workers
@@ -757,14 +760,14 @@ def do_kafka(args):
 
     threads = []
     for i in range(0, threads_per_process):
-        thread = ReadKafkaWriteG2Thread(config, g2_engine, g2_configuration_manager)
+        thread = ReadKafkaWriteG2Thread(config)
         thread.name = "KafkaProcess-0-thread-{0}".format(i)
         threads.append(thread)
 
     # Create monitor thread for master process.
 
     adminThreads = []
-    thread = MonitorThread(config, g2_engine, threads)
+    thread = MonitorThread(config, threads)
     thread.name = "KafkaProcess-0-thread-monitor"
     adminThreads.append(thread)
 
@@ -822,14 +825,14 @@ def do_rabbitmq(args):
 
     threads = []
     for i in range(0, threads_per_process):
-        thread = ReadRabbitMQThread(config, g2_engine, g2_configuration_manager)
+        thread = ReadRabbitMQThread(config)
         thread.name = "RabbitMQProcess-0-thread-{0}".format(i)
         threads.append(thread)
 
     # Create monitor thread for master process.
 
     adminThreads = []
-    thread = MonitorThread(config, g2_engine, threads)
+    thread = MonitorThread(config, threads)
     thread.name = "RabbitMQProcess-0-thread-monitor"
     adminThreads.append(thread)
 
