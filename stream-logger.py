@@ -514,8 +514,13 @@ class ReadKafkaThread(ReadThread):
             kafka_message_string = kafka_message.value().strip()
             if not kafka_message_string:
                 continue
+            if isinstance(kafka_message_string, bytes):
+                kafka_message_string = kafka_message_string.decode()
             logging.debug(message_debug(904, threading.current_thread().name, kafka_message_string))
             self.config['counter_processed_messages'] += 1
+
+            # Write message to log.
+
             logging.info(message_info(101, kafka_message_string))
             consumer.commit()
 
@@ -532,6 +537,7 @@ class ReadRabbitMQThread(ReadThread):
         super().__init__(config)
 
     def callback(self, channel, method, header, body):
+        ''' Called by Pika whenever a message is received. '''
         jsonline = body.decode()
         logging.debug(message_debug(904, threading.current_thread().name, jsonline))
         self.config['counter_processed_messages'] += 1
