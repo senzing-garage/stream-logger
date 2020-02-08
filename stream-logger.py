@@ -28,7 +28,7 @@ import time
 __all__ = []
 __version__ = "1.0.0"  # See https://www.python.org/dev/peps/pep-0396/
 __date__ = '2020-02-06'
-__updated__ = '2020-02-06'
+__updated__ = '2020-02-08'
 
 SENZING_PRODUCT_ID = "5011"  # See https://github.com/Senzing/knowledge-base/blob/master/lists/senzing-product-ids.md
 log_format = '%(asctime)s %(message)s'
@@ -464,7 +464,7 @@ class ReadThread(threading.Thread):
         self.config = config
 
 # -----------------------------------------------------------------------------
-# Class: ReadKafkaWriteG2Thread
+# Class: ReadKafkaThread
 # -----------------------------------------------------------------------------
 
 
@@ -760,7 +760,7 @@ def do_kafka(args):
 
     threads = []
     for i in range(0, threads_per_process):
-        thread = ReadKafkaWriteG2Thread(config)
+        thread = ReadKafkaThread(config)
         thread.name = "KafkaProcess-0-thread-{0}".format(i)
         threads.append(thread)
 
