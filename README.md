@@ -32,16 +32,9 @@ optional arguments:
   -h, --help            show this help message and exit
 ```
 
-To see the options for a subcommand, run commands like:
-
-```console
-./stream-logger.py kafka --help
-```
-
 ### Related artifacts
 
 1. [DockerHub](https://hub.docker.com/r/senzing/stream-logger)
-1. [Helm Chart](https://github.com/Senzing/charts/tree/master/charts/senzing-stream-logger)
 
 ### Contents
 
@@ -53,13 +46,9 @@ To see the options for a subcommand, run commands like:
     1. [Install](#install)
     1. [Run from command line](#run-from-command-line)
 1. [Demonstrate using Docker](#demonstrate-using-docker)
-    1. [Initialize Senzing](#initialize-senzing)
     1. [Configuration](#configuration)
-    1. [Volumes](#volumes)
     1. [Docker network](#docker-network)
     1. [Docker user](#docker-user)
-    1. [External database](#external-database)
-    1. [Database support](#database-support)
     1. [Run docker container](#run-docker-container)
 1. [Develop](#develop)
     1. [Prerequisite software](#prerequisite-software)
@@ -115,79 +104,26 @@ This repository assumes a working knowledge of:
 
 ## Demonstrate using Docker
 
-### Initialize Senzing
-
-1. If Senzing has not been initialized, visit
-   "[How to initialize Senzing with Docker](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/initialize-senzing-with-docker.md)".
-
 ### Configuration
 
 Configuration values specified by environment variable or command line parameter.
 
-- **[SENZING_DATA_SOURCE](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_data_source)**
-- **[SENZING_DATA_VERSION_DIR](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_data_version_dir)**
-- **[SENZING_DATABASE_URL](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_database_url)**
 - **[SENZING_DEBUG](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_debug)**
-- **[SENZING_ENTITY_TYPE](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_entity_type)**
-- **[SENZING_ETC_DIR](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_etc_dir)**
-- **[SENZING_G2_DIR](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_g2_dir)**
-- **[SENZING_INPUT_URL](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_input_url)**
 - **[SENZING_KAFKA_BOOTSTRAP_SERVER](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_kafka_bootstrap_server)**
 - **[SENZING_KAFKA_GROUP](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_kafka_group)**
 - **[SENZING_KAFKA_TOPIC](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_kafka_topic)**
 - **[SENZING_LOG_LEVEL](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_log_level)**
-- **[SENZING_MONITORING_PERIOD](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_monitoring_period)**
+- **[SENZING_MONITORING_PERIOD_IN_SECONDS](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_monitoring_period_in_seconds)**
 - **[SENZING_NETWORK](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_network)**
-- **[SENZING_PROCESSES](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_processes)**
-- **[SENZING_QUEUE_MAX](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_queue_max)**
 - **[SENZING_RABBITMQ_HOST](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_rabbitmq_host)**
 - **[SENZING_RABBITMQ_PASSWORD](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_rabbitmq_password)**
+- **[SENZING_RABBITMQ_PREFETCH_COUNT](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_rabbitmq_prefetch_count)**
 - **[SENZING_RABBITMQ_QUEUE](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_rabbitmq_queue)**
 - **[SENZING_RABBITMQ_USERNAME](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_rabbitmq_username)**
 - **[SENZING_RUNAS_USER](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_runas_user)**
-- **[SENZING_SLEEP_TIME](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_sleep_time)**
+- **[SENZING_SLEEP_TIME_IN_SECONDS](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_sleep_time_in_seconds)**
 - **[SENZING_SUBCOMMAND](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_subcommand)**
 - **[SENZING_THREADS_PER_PROCESS](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_threads_per_process)**
-- **[SENZING_VAR_DIR](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_var_dir)**
-
-### Volumes
-
-:thinking:
-"[How to initialize Senzing with Docker](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/initialize-senzing-with-docker.md)"
-places files in different directories.
-The following examples show how to identify each output directory.
-
-1. **Example #1:**
-   To mimic an actual RPM installation,
-   identify directories for RPM output in this manner:
-
-    ```console
-    export SENZING_DATA_VERSION_DIR=/opt/senzing/data/1.0.0
-    export SENZING_ETC_DIR=/etc/opt/senzing
-    export SENZING_G2_DIR=/opt/senzing/g2
-    export SENZING_VAR_DIR=/var/opt/senzing
-    ```
-
-1. :pencil2: **Example #2:**
-   If Senzing directories were put in alternative directories,
-   set environment variables to reflect where the directories were placed.
-   Example:
-
-    ```console
-    export SENZING_VOLUME=/opt/my-senzing
-
-    export SENZING_DATA_VERSION_DIR=${SENZING_VOLUME}/data/1.0.0
-    export SENZING_ETC_DIR=${SENZING_VOLUME}/etc
-    export SENZING_G2_DIR=${SENZING_VOLUME}/g2
-    export SENZING_VAR_DIR=${SENZING_VOLUME}/var
-    ```
-
-1. :thinking: If internal database is used, permissions may need to be changed in `/var/opt/senzing`.
-   Example:
-
-    ```console
-    sudo chown $(id -u):$(id -g) -R ${SENZING_VAR_DIR}
-    ```
 
 ### Docker network
 
@@ -242,49 +178,6 @@ Use if a different userid (UID) is required.
     export SENZING_RUNAS_USER_PARAMETER="--user ${SENZING_RUNAS_USER}"
     ```
 
-### External database
-
-:thinking: **Optional:**  Use if storing data in an external database.
-If not specified, the internal SQLite database will be used.
-
-1. :pencil2: Specify database.
-   Example:
-
-    ```console
-    export DATABASE_PROTOCOL=postgresql
-    export DATABASE_USERNAME=postgres
-    export DATABASE_PASSWORD=postgres
-    export DATABASE_HOST=senzing-postgresql
-    export DATABASE_PORT=5432
-    export DATABASE_DATABASE=G2
-    ```
-
-1. Construct Database URL.
-   Example:
-
-    ```console
-    export SENZING_DATABASE_URL="${DATABASE_PROTOCOL}://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}"
-    ```
-
-1. Construct parameter for `docker run`.
-   Example:
-
-    ```console
-    export SENZING_DATABASE_URL_PARAMETER="--env SENZING_DATABASE_URL=${SENZING_DATABASE_URL}"
-    ```
-
-### Database support
-
-:thinking: **Optional:**  Some database need additional support.
-For other databases, these steps may be skipped.
-
-1. **Db2:** See
-   [Support Db2](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/support-db2.md)
-   instructions to set `SENZING_OPT_IBM_DIR_PARAMETER`.
-1. **MS SQL:** See
-   [Support MS SQL](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/support-mssql.md)
-   instructions to set `SENZING_OPT_MICROSOFT_DIR_PARAMETER`.
-
 ### Run docker container
 
 1. :pencil2: Set environment variables.
@@ -292,10 +185,8 @@ For other databases, these steps may be skipped.
 
     ```console
     export SENZING_SUBCOMMAND=kafka
-    export SENZING_DATA_SOURCE=TEST
     export SENZING_KAFKA_BOOTSTRAP_SERVER=senzing-kafka:9092
     export SENZING_KAFKA_TOPIC=senzing-kafka-topic
-    export SENZING_MONITORING_PERIOD=60
     ```
 
 1. Run docker container.
@@ -304,21 +195,12 @@ For other databases, these steps may be skipped.
     ```console
     sudo docker run \
       --env SENZING_SUBCOMMAND="${SENZING_SUBCOMMAND}" \
-      --env SENZING_DATA_SOURCE="${SENZING_DATA_SOURCE}" \
       --env SENZING_KAFKA_BOOTSTRAP_SERVER="${SENZING_KAFKA_BOOTSTRAP_SERVER}" \
       --env SENZING_KAFKA_TOPIC="${SENZING_KAFKA_TOPIC}" \
-      --env SENZING_MONITORING_PERIOD="${SENZING_MONITORING_PERIOD}" \
       --interactive \
       --rm \
       --tty \
-      --volume ${SENZING_DATA_VERSION_DIR}:/opt/senzing/data \
-      --volume ${SENZING_ETC_DIR}:/etc/opt/senzing \
-      --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
-      --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
-      ${SENZING_DATABASE_URL_PARAMETER} \
       ${SENZING_NETWORK_PARAMETER} \
-      ${SENZING_OPT_IBM_DIR_PARAMETER} \
-      ${SENZING_OPT_MICROSOFT_DIR_PARAMETER} \
       ${SENZING_RUNAS_USER_PARAMETER} \
       senzing/stream-logger
     ```
@@ -376,11 +258,6 @@ see [Environment Variables](https://github.com/Senzing/knowledge-base/blob/maste
     Note: `sudo make docker-build-development-cache` can be used to create cached docker layers.
 
 ## Examples
-
-1. Examples of use:
-    1. [docker-compose-demo](https://github.com/Senzing/docker-compose-demo)
-    1. [kubernetes-demo](https://github.com/Senzing/kubernetes-demo)
-    1. [rancher-demo](https://github.com/Senzing/rancher-demo/tree/master/docs/db2-cluster-demo.md)
 
 ## Errors
 

@@ -28,7 +28,7 @@ import time
 __all__ = []
 __version__ = "1.0.0"  # See https://www.python.org/dev/peps/pep-0396/
 __date__ = '2020-02-06'
-__updated__ = '2020-02-08'
+__updated__ = '2020-02-09'
 
 SENZING_PRODUCT_ID = "5011"  # See https://github.com/Senzing/knowledge-base/blob/master/lists/senzing-product-ids.md
 log_format = '%(asctime)s %(message)s'
@@ -474,7 +474,7 @@ class ReadKafkaThread(ReadThread):
         super().__init__(config)
 
     def run(self):
-        '''Process for reading lines from Kafka and feeding them to a process_function() function'''
+        '''Process for reading lines from Kafka and feeding them to a process_function() function.'''
 
         logging.info(message_info(129, threading.current_thread().name))
 
@@ -545,7 +545,7 @@ class ReadRabbitMQThread(ReadThread):
         channel.basic_ack(delivery_tag=method.delivery_tag)
 
     def run(self):
-        '''Process for reading lines from RabbitMQ and feeding them to a process_function() function'''
+        '''Process for reading lines from RabbitMQ and feeding them to a process_function() function.'''
 
         logging.info(message_info(129, threading.current_thread().name))
 

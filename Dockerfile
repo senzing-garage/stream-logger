@@ -1,7 +1,7 @@
 ARG BASE_IMAGE=debian:10.2
 FROM ${BASE_IMAGE}
 
-ENV REFRESHED_AT=2020-02-06
+ENV REFRESHED_AT=2020-02-09
 
 LABEL Name="senzing/stream-logger" \
       Maintainer="support@senzing.com" \
