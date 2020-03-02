@@ -28,7 +28,7 @@ import time
 __all__ = []
 __version__ = "1.0.0"  # See https://www.python.org/dev/peps/pep-0396/
 __date__ = '2020-02-06'
-__updated__ = '2020-02-09'
+__updated__ = '2020-02-21'
 
 SENZING_PRODUCT_ID = "5011"  # See https://github.com/Senzing/knowledge-base/blob/master/lists/senzing-product-ids.md
 log_format = '%(asctime)s %(message)s'
@@ -594,7 +594,6 @@ class MonitorThread(threading.Thread):
         '''Periodically monitor what is happening.'''
 
         last_processed_records = 0
-        last_queued_records = 0
         last_time = time.time()
 
         # Define monitoring report interval.
@@ -653,7 +652,6 @@ class MonitorThread(threading.Thread):
             # Store values for next iteration of loop.
 
             last_processed_records = processed_messages_total
-            last_queued_records = queued_records_total
             last_time = now
 
 # -----------------------------------------------------------------------------
