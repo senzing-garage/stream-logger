@@ -28,7 +28,7 @@ import time
 __all__ = []
 __version__ = "1.0.0"  # See https://www.python.org/dev/peps/pep-0396/
 __date__ = '2020-02-06'
-__updated__ = '2020-02-21'
+__updated__ = '2020-03-04'
 
 SENZING_PRODUCT_ID = "5011"  # See https://github.com/Senzing/knowledge-base/blob/master/lists/senzing-product-ids.md
 log_format = '%(asctime)s %(message)s'
@@ -153,7 +153,7 @@ def get_parser():
                 "--monitoring-period-in-seconds": {
                     "dest": "monitoring_period_in_seconds",
                     "metavar": "SENZING_MONITORING_PERIOD_IN_SECONDS",
-                    "help": "Period, in seconds, between monitoring reports. Default: 300"
+                    "help": "Period, in seconds, between monitoring reports. Default: 600"
                 },
                 "--threads-per-process": {
                     "dest": "threads_per_process",
@@ -178,7 +178,7 @@ def get_parser():
                 "--monitoring-period-in-seconds": {
                     "dest": "monitoring_period_in_seconds",
                     "metavar": "SENZING_MONITORING_PERIOD_IN_SECONDS",
-                    "help": "Period, in seconds, between monitoring reports. Default: 300"
+                    "help": "Period, in seconds, between monitoring reports. Default: 600"
                 },
                 "--rabbitmq-host": {
                     "dest": "rabbitmq_host",
