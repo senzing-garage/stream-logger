@@ -8,6 +8,7 @@ from glob import glob
 from urllib.parse import urlparse, urlunparse
 from urllib.request import urlopen
 import argparse
+import boto3
 import configparser
 import confluent_kafka
 import datetime
@@ -26,9 +27,9 @@ import threading
 import time
 
 __all__ = []
-__version__ = "1.0.0"  # See https://www.python.org/dev/peps/pep-0396/
+__version__ = "1.1.0"  # See https://www.python.org/dev/peps/pep-0396/
 __date__ = '2020-02-06'
-__updated__ = '2020-03-25'
+__updated__ = '2020-06-22'
 
 SENZING_PRODUCT_ID = "5011"  # See https://github.com/Senzing/knowledge-base/blob/master/lists/senzing-product-ids.md
 log_format = '%(asctime)s %(message)s'
@@ -96,6 +97,11 @@ configuration_locator = {
         "default": 0,
         "env": "SENZING_SLEEP_TIME_IN_SECONDS",
         "cli": "sleep-time-in-seconds"
+    },
+    "sqs_queue_url": {
+        "default": None,
+        "env": "SENZING_SQS_QUEUE_URL",
+        "cli": "sqs-queue-url"
     },
     "subcommand": {
         "default": None,
@@ -212,6 +218,36 @@ def get_parser():
                 },
             },
         },
+        'sqs': {
+            "help": 'Read JSON Lines from AWS SQS queue.',
+            "arguments": {
+                "--debug": {
+                    "dest": "debug",
+                    "action": "store_true",
+                    "help": "Enable debugging. (SENZING_DEBUG) Default: False"
+                },
+                "--delay-in-seconds": {
+                    "dest": "delay_in_seconds",
+                    "metavar": "SENZING_DELAY_IN_SECONDS",
+                    "help": "Delay before processing in seconds. DEFAULT: 0"
+                },
+                "--monitoring-period-in-seconds": {
+                    "dest": "monitoring_period_in_seconds",
+                    "metavar": "SENZING_MONITORING_PERIOD_IN_SECONDS",
+                    "help": "Period, in seconds, between monitoring reports. Default: 600"
+                },
+                "--sqs-queue-url": {
+                    "dest": "sqs_queue_url",
+                    "metavar": "SENZING_SQS_QUEUE_URL",
+                    "help": "AWS SQS URL. Default: none"
+                },
+                "--threads-per-process": {
+                    "dest": "threads_per_process",
+                    "metavar": "SENZING_THREADS_PER_PROCESS",
+                    "help": "Number of threads per process. Default: 4"
+                },
+            },
+        },
         'sleep': {
             "help": 'Do nothing but sleep. For Docker testing.',
             "arguments": {
@@ -266,6 +302,7 @@ message_dictionary = {
     "129": "{0} is running.",
     "130": "RabbitMQ channel closed by the broker. Shutting down thread {0}.",
     "152": "Sleeping {0} seconds before deploying administrative threads.",
+    "190": "AWS SQS Long-polling: No messages from {0}",
     "293": "For information on warnings and errors, see https://github.com/Senzing/stream-logger#errors",
     "294": "Version: {0}  Updated: {1}",
     "295": "Sleeping infinitely.",
@@ -418,7 +455,7 @@ def validate_configuration(config):
 
     subcommand = config.get('subcommand')
 
-    if subcommand in ['rabbitmq', 'kafka']:
+    if subcommand in ['rabbitmq', 'kafka', 'sqs']:
         pass
 
     # Log warning messages.
@@ -579,6 +616,64 @@ class ReadRabbitMQThread(ReadThread):
             logging.info(message_info(130, threading.current_thread().name))
 
 # -----------------------------------------------------------------------------
+# Class: ReadSqsThread
+# -----------------------------------------------------------------------------
+
+
+class ReadSqsThread(ReadThread):
+
+    def __init__(self, config):
+        super().__init__(config)
+        self.queue_url = config.get("sqs_queue_url")
+        self.sqs = boto3.client("sqs")
+
+    def run(self):
+        '''Process for reading lines from SQS and feeding them to a process_function() function.'''
+
+        logging.info(message_info(129, threading.current_thread().name))
+
+        # In a loop, get messages from AWS SQS.
+
+        while True:
+
+            # Get message from AWS SQS queue.
+
+            sqs_response = self.sqs.receive_message(
+                QueueUrl=self.queue_url,
+                AttributeNames=[],
+                MaxNumberOfMessages=1,
+                MessageAttributeNames=[],
+                VisibilityTimeout=0,
+                WaitTimeSeconds=20
+            )
+
+            # If non-standard SQS output or empty messages, just loop.
+
+            if sqs_response is None:
+                continue
+            sqs_messages = sqs_response.get("Messages", [])
+            if not sqs_messages:
+                logging.info(message_info(190, self.queue_url))
+                continue
+
+            # Construct and verify SQS message.
+
+            sqs_message = sqs_messages[0]
+            sqs_message_body = sqs_message.get("Body")
+            sqs_message_receipt_handle = sqs_message.get("ReceiptHandle")
+
+            # Write message to log.
+
+            logging.info(message_info(101, sqs_message_body))
+
+            # After successful import into Senzing, tell AWS SQS we're done with message.
+
+            self.sqs.delete_message(
+                QueueUrl=self.queue_url,
+                ReceiptHandle=sqs_message_receipt_handle
+            )
+
+# -----------------------------------------------------------------------------
 # Class: MonitorThread
 # -----------------------------------------------------------------------------
 
@@ -720,6 +815,75 @@ def exit_silently():
     sys.exit(0)
 
 # -----------------------------------------------------------------------------
+# dohelper_* functions
+# -----------------------------------------------------------------------------
+
+
+def dohelper_thread_runner(args, threadClass):
+    ''' Performs threadClass. '''
+
+    # Get context from CLI, environment variables, and ini files.
+
+    config = get_configuration(args)
+
+    # Prolog.
+
+    logging.info(entry_template(config))
+
+    # If requested, delay start.
+
+    delay(config)
+
+    # Pull values from configuration.
+
+    threads_per_process = config.get('threads_per_process')
+
+    # Create queue reader threads for master process.
+
+    threads = []
+    for i in range(0, threads_per_process):
+        thread = threadClass(config)
+        thread.name = "{0}-0-thread-{1}".format(threadClass.__name__, i)
+        threads.append(thread)
+
+    # Create monitor thread for master process.
+
+    adminThreads = []
+    thread = MonitorThread(config, threads)
+    thread.name = "{0}-0-thread-monitor".format(threadClass.__name__)
+    adminThreads.append(thread)
+
+    # Start threads for master process.
+
+    for thread in threads:
+        thread.start()
+
+    # Sleep, if requested.
+
+    sleep_time_in_seconds = config.get('sleep_time_in_seconds')
+    if sleep_time_in_seconds > 0:
+        logging.info(message_info(152, sleep_time_in_seconds))
+        time.sleep(sleep_time_in_seconds)
+
+    # Start administrative threads for master process.
+
+    for thread in adminThreads:
+        thread.start()
+
+    # Collect inactive threads from master process.
+
+    for thread in threads:
+        thread.join()
+
+    # Cleanup.
+
+    g2_engine.destroy()
+
+    # Epilog.
+
+    logging.info(exit_template(config))
+
+# -----------------------------------------------------------------------------
 # do_* functions
 #   Common function signature: do_XXX(args)
 # -----------------------------------------------------------------------------
@@ -744,131 +908,13 @@ def do_docker_acceptance_test(args):
 def do_kafka(args):
     ''' Read from Kafka. '''
 
-    # Get context from CLI, environment variables, and ini files.
-
-    config = get_configuration(args)
-
-    # Prolog.
-
-    logging.info(entry_template(config))
-
-    # If requested, delay start.
-
-    delay(config)
-
-    # Pull values from configuration.
-
-    threads_per_process = config.get('threads_per_process')
-
-    # Create kafka reader threads for master process.
-
-    threads = []
-    for i in range(0, threads_per_process):
-        thread = ReadKafkaThread(config)
-        thread.name = "KafkaProcess-0-thread-{0}".format(i)
-        threads.append(thread)
-
-    # Create monitor thread for master process.
-
-    adminThreads = []
-    thread = MonitorThread(config, threads)
-    thread.name = "KafkaProcess-0-thread-monitor"
-    adminThreads.append(thread)
-
-    # Start threads for master process.
-
-    for thread in threads:
-        thread.start()
-
-    # Sleep, if requested.
-
-    sleep_time_in_seconds = config.get('sleep_time_in_seconds')
-    if sleep_time_in_seconds > 0:
-        logging.info(message_info(152, sleep_time_in_seconds))
-        time.sleep(sleep_time_in_seconds)
-
-    # Start administrative threads for master process.
-
-    for thread in adminThreads:
-        thread.start()
-
-    # Collect inactive threads from master process.
-
-    for thread in threads:
-        thread.join()
-
-    # Cleanup.
-
-    g2_engine.destroy()
-
-    # Epilog.
-
-    logging.info(exit_template(config))
+    dohelper_thread_runner(args, ReadKafkaThread)
 
 
 def do_rabbitmq(args):
     ''' Read from rabbitmq. '''
 
-    # Get context from CLI, environment variables, and ini files.
-
-    config = get_configuration(args)
-
-    # Prolog.
-
-    logging.info(entry_template(config))
-
-    # If requested, delay start.
-
-    delay(config)
-
-    # Pull values from configuration.
-
-    threads_per_process = config.get('threads_per_process')
-
-    # Create RabbitMQ reader threads for master process.
-
-    threads = []
-    for i in range(0, threads_per_process):
-        thread = ReadRabbitMQThread(config)
-        thread.name = "RabbitMQProcess-0-thread-{0}".format(i)
-        threads.append(thread)
-
-    # Create monitor thread for master process.
-
-    adminThreads = []
-    thread = MonitorThread(config, threads)
-    thread.name = "RabbitMQProcess-0-thread-monitor"
-    adminThreads.append(thread)
-
-    # Start threads for master process.
-
-    for thread in threads:
-        thread.start()
-
-    # Sleep, if requested.
-
-    sleep_time_in_seconds = config.get('sleep_time_in_seconds')
-    if sleep_time_in_seconds > 0:
-        logging.info(message_info(152, sleep_time_in_seconds))
-        time.sleep(sleep_time_in_seconds)
-
-    # Start administrative threads for master process.
-
-    for thread in adminThreads:
-        thread.start()
-
-    # Collect inactive threads from master process.
-
-    for thread in threads:
-        thread.join()
-
-    # Cleanup.
-
-    g2_engine.destroy()
-
-    # Epilog.
-
-    logging.info(exit_template(config))
+    dohelper_thread_runner(args, ReadRabbitMQThread)
 
 
 def do_sleep(args):
@@ -901,6 +947,12 @@ def do_sleep(args):
     # Epilog.
 
     logging.info(exit_template(config))
+
+
+def do_sqs(args):
+    ''' Read from AWS SQS. '''
+
+    dohelper_thread_runner(args, ReadSqsThread)
 
 
 def do_version(args):
