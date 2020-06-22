@@ -25,6 +25,7 @@ RUN apt update \
 # Install packages via PIP.
 
 RUN pip3 install \
+      boto3 \
       configparser \
       confluent-kafka \
       psutil \
