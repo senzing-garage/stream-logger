@@ -673,6 +673,10 @@ class ReadSqsThread(ReadThread):
                 ReceiptHandle=sqs_message_receipt_handle
             )
 
+            # Count the processing
+
+            self.config['counter_processed_messages'] += 1
+
 # -----------------------------------------------------------------------------
 # Class: MonitorThread
 # -----------------------------------------------------------------------------
