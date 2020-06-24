@@ -27,9 +27,9 @@ import threading
 import time
 
 __all__ = []
-__version__ = "1.1.0"  # See https://www.python.org/dev/peps/pep-0396/
+__version__ = "1.1.1"  # See https://www.python.org/dev/peps/pep-0396/
 __date__ = '2020-02-06'
-__updated__ = '2020-06-22'
+__updated__ = '2020-06-24'
 
 SENZING_PRODUCT_ID = "5011"  # See https://github.com/Senzing/knowledge-base/blob/master/lists/senzing-product-ids.md
 log_format = '%(asctime)s %(message)s'
@@ -643,7 +643,7 @@ class ReadSqsThread(ReadThread):
                 AttributeNames=[],
                 MaxNumberOfMessages=1,
                 MessageAttributeNames=[],
-                VisibilityTimeout=0,
+                VisibilityTimeout=30,
                 WaitTimeSeconds=20
             )
 
