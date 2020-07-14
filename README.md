@@ -89,8 +89,6 @@ This repository assumes a working knowledge of:
 1. Install prerequisites:
     1. [Debian-based installation](docs/debian-based-installation.md) - For Ubuntu and [others](https://en.wikipedia.org/wiki/List_of_Linux_distributions#Debian-based)
     1. [RPM-based installation](docs/rpm-based-installation.md) - For Red Hat, CentOS, openSuse and [others](https://en.wikipedia.org/wiki/List_of_Linux_distributions#RPM-based).
-1. Install stream-producer
-    1. See [github.com/Senzing/stream-producer](https://github.com/Senzing/stream-producer#demonstrate-using-command-line-interface)
 
 ### Run from command line
 
