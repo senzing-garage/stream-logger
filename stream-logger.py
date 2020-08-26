@@ -88,6 +88,11 @@ configuration_locator = {
         "env": "SENZING_RABBITMQ_QUEUE",
         "cli": "rabbitmq-queue",
     },
+    "rabbitmq_use_existing_entities": {
+        "default": True,
+        "env": "SENZING_RABBITMQ_USE_EXISTING_ENTITIES",
+        "cli": "rabbitmq-use-existing-entities",
+    },
     "rabbitmq_username": {
         "default": "user",
         "env": "SENZING_RABBITMQ_USERNAME",
@@ -206,6 +211,11 @@ def get_parser():
                     "metavar": "SENZING_RABBITMQ_QUEUE",
                     "help": "RabbitMQ queue. Default: senzing-rabbitmq-queue"
                 },
+                "--rabbitmq-use-existing-entities": {
+                    "dest": "rabbitmq_use_existing_entities",
+                    "metavar": "SENZING_RABBITMQ_USE_EXISTING_ENTITIES",
+                    "help": "Connect to an existing queue using its settings. An error is thrown if the queue does not exist. If False, it will create the queue if it does not exist. If it exists, then it will attempt to connect, checking the settings match. Default: True"
+	    },
                 "--rabbitmq-username": {
                     "dest": "rabbitmq_username",
                     "metavar": "SENZING_RABBITMQ_USERNAME",
@@ -417,7 +427,10 @@ def get_configuration(args):
 
     # Special case: Change boolean strings to booleans.
 
-    booleans = ['debug']
+    booleans = [
+        'debug',
+        'rabbitmq_use_existing_entities',
+    ]
     for boolean in booleans:
         boolean_value = result.get(boolean)
         if isinstance(boolean_value, str):
@@ -589,6 +602,7 @@ class ReadRabbitMQThread(ReadThread):
         # Get config parameters.
 
         rabbitmq_queue = self.config.get("rabbitmq_queue")
+        rabbitmq_passive_declare = self.config.get("rabbitmq_use_existing_entities")
         rabbitmq_username = self.config.get("rabbitmq_username")
         rabbitmq_password = self.config.get("rabbitmq_password")
         rabbitmq_host = self.config.get("rabbitmq_host")
@@ -600,7 +614,7 @@ class ReadRabbitMQThread(ReadThread):
             credentials = pika.PlainCredentials(rabbitmq_username, rabbitmq_password)
             connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmq_host, credentials=credentials))
             channel = connection.channel()
-            channel.queue_declare(queue=rabbitmq_queue)
+            channel.queue_declare(queue=rabbitmq_queue, passive=rabbitmq_passive_declare)
             channel.basic_qos(prefetch_count=rabbitmq_prefetch_count)
             channel.basic_consume(on_message_callback=self.callback, queue=rabbitmq_queue)
         except pika.exceptions.AMQPConnectionError as err:
