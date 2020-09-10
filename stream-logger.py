@@ -27,9 +27,9 @@ import threading
 import time
 
 __all__ = []
-__version__ = "1.1.1"  # See https://www.python.org/dev/peps/pep-0396/
+__version__ = "1.1.2"  # See https://www.python.org/dev/peps/pep-0396/
 __date__ = '2020-02-06'
-__updated__ = '2020-06-24'
+__updated__ = '2020-09-10'
 
 SENZING_PRODUCT_ID = "5011"  # See https://github.com/Senzing/knowledge-base/blob/master/lists/senzing-product-ids.md
 log_format = '%(asctime)s %(message)s'
@@ -135,17 +135,8 @@ def get_parser():
     subcommands = {
         'kafka': {
             "help": 'Read JSON Lines from Apache Kafka topic.',
+            "argument_aspects": ["common"],
             "arguments": {
-                "--debug": {
-                    "dest": "debug",
-                    "action": "store_true",
-                    "help": "Enable debugging. (SENZING_DEBUG) Default: False"
-                },
-                "--delay-in-seconds": {
-                    "dest": "delay_in_seconds",
-                    "metavar": "SENZING_DELAY_IN_SECONDS",
-                    "help": "Delay before processing in seconds. DEFAULT: 0"
-                },
                 "--kafka-bootstrap-server": {
                     "dest": "kafka_bootstrap_server",
                     "metavar": "SENZING_KAFKA_BOOTSTRAP_SERVER",
@@ -161,36 +152,12 @@ def get_parser():
                     "metavar": "SENZING_KAFKA_TOPIC",
                     "help": "Kafka topic. Default: senzing-kafka-topic"
                 },
-                "--monitoring-period-in-seconds": {
-                    "dest": "monitoring_period_in_seconds",
-                    "metavar": "SENZING_MONITORING_PERIOD_IN_SECONDS",
-                    "help": "Period, in seconds, between monitoring reports. Default: 600"
-                },
-                "--threads-per-process": {
-                    "dest": "threads_per_process",
-                    "metavar": "SENZING_THREADS_PER_PROCESS",
-                    "help": "Number of threads per process. Default: 4"
-                },
             },
         },
         'rabbitmq': {
             "help": 'Read JSON Lines from RabbitMQ queue.',
+            "argument_aspects": ["common"],
             "arguments": {
-                "--debug": {
-                    "dest": "debug",
-                    "action": "store_true",
-                    "help": "Enable debugging. (SENZING_DEBUG) Default: False"
-                },
-                "--delay-in-seconds": {
-                    "dest": "delay_in_seconds",
-                    "metavar": "SENZING_DELAY_IN_SECONDS",
-                    "help": "Delay before processing in seconds. DEFAULT: 0"
-                },
-                "--monitoring-period-in-seconds": {
-                    "dest": "monitoring_period_in_seconds",
-                    "metavar": "SENZING_MONITORING_PERIOD_IN_SECONDS",
-                    "help": "Period, in seconds, between monitoring reports. Default: 600"
-                },
                 "--rabbitmq-host": {
                     "dest": "rabbitmq_host",
                     "metavar": "SENZING_RABBITMQ_HOST",
@@ -215,46 +182,22 @@ def get_parser():
                     "dest": "rabbitmq_use_existing_entities",
                     "metavar": "SENZING_RABBITMQ_USE_EXISTING_ENTITIES",
                     "help": "Connect to an existing queue using its settings. An error is thrown if the queue does not exist. If False, it will create the queue if it does not exist. If it exists, then it will attempt to connect, checking the settings match. Default: True"
-	    },
+                },
                 "--rabbitmq-username": {
                     "dest": "rabbitmq_username",
                     "metavar": "SENZING_RABBITMQ_USERNAME",
                     "help": "RabbitMQ username. Default: user"
                 },
-                "--threads-per-process": {
-                    "dest": "threads_per_process",
-                    "metavar": "SENZING_THREADS_PER_PROCESS",
-                    "help": "Number of threads per process. Default: 4"
-                },
             },
         },
         'sqs': {
             "help": 'Read JSON Lines from AWS SQS queue.',
+            "argument_aspects": ["common"],
             "arguments": {
-                "--debug": {
-                    "dest": "debug",
-                    "action": "store_true",
-                    "help": "Enable debugging. (SENZING_DEBUG) Default: False"
-                },
-                "--delay-in-seconds": {
-                    "dest": "delay_in_seconds",
-                    "metavar": "SENZING_DELAY_IN_SECONDS",
-                    "help": "Delay before processing in seconds. DEFAULT: 0"
-                },
-                "--monitoring-period-in-seconds": {
-                    "dest": "monitoring_period_in_seconds",
-                    "metavar": "SENZING_MONITORING_PERIOD_IN_SECONDS",
-                    "help": "Period, in seconds, between monitoring reports. Default: 600"
-                },
                 "--sqs-queue-url": {
                     "dest": "sqs_queue_url",
                     "metavar": "SENZING_SQS_QUEUE_URL",
                     "help": "AWS SQS URL. Default: none"
-                },
-                "--threads-per-process": {
-                    "dest": "threads_per_process",
-                    "metavar": "SENZING_THREADS_PER_PROCESS",
-                    "help": "Number of threads per process. Default: 4"
                 },
             },
         },
@@ -276,7 +219,42 @@ def get_parser():
         },
     }
 
-    parser = argparse.ArgumentParser(prog="stream-logger.py", description="Log contents from a stream. For more information, see https://github.com/senzing/stream-logger")
+    argument_aspects = {
+        "common": {
+            "--debug": {
+                "dest": "debug",
+                "action": "store_true",
+                "help": "Enable debugging. (SENZING_DEBUG) Default: False"
+            },
+            "--delay-in-seconds": {
+                "dest": "delay_in_seconds",
+                "metavar": "SENZING_DELAY_IN_SECONDS",
+                "help": "Delay before processing in seconds. DEFAULT: 0"
+            },
+            "--monitoring-period-in-seconds": {
+                "dest": "monitoring_period_in_seconds",
+                "metavar": "SENZING_MONITORING_PERIOD_IN_SECONDS",
+                "help": "Period, in seconds, between monitoring reports. Default: 600"
+            },
+            "--threads-per-process": {
+                "dest": "threads_per_process",
+                "metavar": "SENZING_THREADS_PER_PROCESS",
+                "help": "Number of threads per process. Default: 4"
+            },
+        },
+    }
+    # Augment "subcommands" variable with arguments specified by aspects.
+
+    for subcommand, subcommand_value in subcommands.items():
+        if 'argument_aspects' in subcommand_value:
+            for aspect in subcommand_value['argument_aspects']:
+                if 'arguments' not in subcommands[subcommand]:
+                    subcommands[subcommand]['arguments'] = {}
+                arguments = argument_aspects.get(aspect, {})
+                for argument, argument_value in arguments.items():
+                    subcommands[subcommand]['arguments'][argument] = argument_value
+
+    parser = argparse.ArgumentParser(prog="init-container.py", description="Initialize Senzing installation. For more information, see https://github.com/Senzing/docker-init-container")
     subparsers = parser.add_subparsers(dest='subcommand', help='Subcommands (SENZING_SUBCOMMAND):')
 
     for subcommand_key, subcommand_values in subcommands.items():
@@ -419,6 +397,11 @@ def get_configuration(args):
         new_key = key.format(subcommand.replace('-', '_'))
         if value:
             result[new_key] = value
+
+    # Add program information.
+
+    result['program_version'] = __version__
+    result['program_updated'] = __updated__
 
     # Special case: subcommand from command-line
 
@@ -577,7 +560,7 @@ class ReadKafkaThread(ReadThread):
         consumer.close()
 
 # -----------------------------------------------------------------------------
-# Class: ReadRabbitMQWriteG2Thread
+# Class: ReadRabbitMQThread
 # -----------------------------------------------------------------------------
 
 
@@ -892,10 +875,6 @@ def dohelper_thread_runner(args, threadClass):
 
     for thread in threads:
         thread.join()
-
-    # Cleanup.
-
-    g2_engine.destroy()
 
     # Epilog.
 
