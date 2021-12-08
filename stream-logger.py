@@ -4,6 +4,8 @@
 # stream-logger.py Logger of streaming input.
 # -----------------------------------------------------------------------------
 
+# Import from standard library. https://docs.python.org/3/library/
+
 import argparse
 import configparser
 import datetime
@@ -23,14 +25,16 @@ from glob import glob
 from urllib.parse import urlparse, urlunparse
 from urllib.request import urlopen
 
+# Import from https://pypi.org/
+
 import boto3
 import confluent_kafka
 import pika
 
 __all__ = []
-__version__ = "1.1.2"  # See https://www.python.org/dev/peps/pep-0396/
+__version__ = "1.1.4"  # See https://www.python.org/dev/peps/pep-0396/
 __date__ = '2020-02-06'
-__updated__ = '2020-09-10'
+__updated__ = '2021-12-08'
 
 SENZING_PRODUCT_ID = "5011"  # See https://github.com/Senzing/knowledge-base/blob/master/lists/senzing-product-ids.md
 log_format = '%(asctime)s %(message)s'
