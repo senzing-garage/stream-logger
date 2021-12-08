@@ -1,11 +1,11 @@
-ARG BASE_IMAGE=debian:10.10@sha256:e5cfab8012b17d80f93a7f567797b0c8a2839069d4f50e499152162152518663
+ARG BASE_IMAGE=debian:10.11@sha256:9a1f494bb52e5d18e2dfb0fd6e59dbfe69aae9feecff1b246ad69984fbe25772
 FROM ${BASE_IMAGE}
 
-ENV REFRESHED_AT=2021-10-12
+ENV REFRESHED_AT=2021-12-07
 
 LABEL Name="senzing/stream-logger" \
       Maintainer="support@senzing.com" \
-      Version="1.1.3"
+      Version="1.1.4"
 
 HEALTHCHECK CMD ["/app/healthcheck.sh"]
 
@@ -24,12 +24,10 @@ RUN apt update \
 
 # Install packages via PIP.
 
-RUN pip3 install \
-      boto3 \
-      configparser \
-      confluent-kafka \
-      psutil \
-      pika
+COPY requirements.txt .
+RUN pip3 install --upgrade pip \
+ && pip3 install -r requirements.txt \
+ && rm /requirements.txt
 
 # Copy files from repository.
 
