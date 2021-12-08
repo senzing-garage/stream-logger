@@ -4,13 +4,8 @@
 # stream-logger.py Logger of streaming input.
 # -----------------------------------------------------------------------------
 
-from glob import glob
-from urllib.parse import urlparse, urlunparse
-from urllib.request import urlopen
 import argparse
-import boto3
 import configparser
-import confluent_kafka
 import datetime
 import json
 import linecache
@@ -18,13 +13,19 @@ import logging
 import math
 import multiprocessing
 import os
-import pika
 import queue
 import signal
 import string
 import sys
 import threading
 import time
+from glob import glob
+from urllib.parse import urlparse, urlunparse
+from urllib.request import urlopen
+
+import boto3
+import confluent_kafka
+import pika
 
 __all__ = []
 __version__ = "1.1.2"  # See https://www.python.org/dev/peps/pep-0396/
