@@ -80,7 +80,7 @@ Budget 40 minutes to get the demonstration up-and-running, depending on CPU and 
 
 This repository assumes a working knowledge of:
 
-1. [Docker](https://github.com/Senzing/knowledge-base/blob/master/WHATIS/docker.md)
+1. [Docker](https://github.com/Senzing/knowledge-base/blob/main/WHATIS/docker.md)
 
 ## Demonstrate using Command Line
 
@@ -106,22 +106,22 @@ This repository assumes a working knowledge of:
 
 Configuration values specified by environment variable or command line parameter.
 
-- **[SENZING_DEBUG](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_debug)**
-- **[SENZING_KAFKA_BOOTSTRAP_SERVER](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_kafka_bootstrap_server)**
-- **[SENZING_KAFKA_GROUP](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_kafka_group)**
-- **[SENZING_KAFKA_TOPIC](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_kafka_topic)**
-- **[SENZING_LOG_LEVEL](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_log_level)**
-- **[SENZING_MONITORING_PERIOD_IN_SECONDS](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_monitoring_period_in_seconds)**
-- **[SENZING_NETWORK](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_network)**
-- **[SENZING_RABBITMQ_HOST](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_rabbitmq_host)**
-- **[SENZING_RABBITMQ_PASSWORD](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_rabbitmq_password)**
-- **[SENZING_RABBITMQ_PREFETCH_COUNT](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_rabbitmq_prefetch_count)**
-- **[SENZING_RABBITMQ_QUEUE](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_rabbitmq_queue)**
-- **[SENZING_RABBITMQ_USERNAME](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_rabbitmq_username)**
-- **[SENZING_RUNAS_USER](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_runas_user)**
-- **[SENZING_SLEEP_TIME_IN_SECONDS](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_sleep_time_in_seconds)**
-- **[SENZING_SUBCOMMAND](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_subcommand)**
-- **[SENZING_THREADS_PER_PROCESS](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md#senzing_threads_per_process)**
+- **[SENZING_DEBUG](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_debug)**
+- **[SENZING_KAFKA_BOOTSTRAP_SERVER](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_kafka_bootstrap_server)**
+- **[SENZING_KAFKA_GROUP](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_kafka_group)**
+- **[SENZING_KAFKA_TOPIC](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_kafka_topic)**
+- **[SENZING_LOG_LEVEL](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_log_level)**
+- **[SENZING_MONITORING_PERIOD_IN_SECONDS](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_monitoring_period_in_seconds)**
+- **[SENZING_NETWORK](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_network)**
+- **[SENZING_RABBITMQ_HOST](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_host)**
+- **[SENZING_RABBITMQ_PASSWORD](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_password)**
+- **[SENZING_RABBITMQ_PREFETCH_COUNT](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_prefetch_count)**
+- **[SENZING_RABBITMQ_QUEUE](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_queue)**
+- **[SENZING_RABBITMQ_USERNAME](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_username)**
+- **[SENZING_RUNAS_USER](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_runas_user)**
+- **[SENZING_SLEEP_TIME_IN_SECONDS](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_sleep_time_in_seconds)**
+- **[SENZING_SUBCOMMAND](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_subcommand)**
+- **[SENZING_THREADS_PER_PROCESS](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_threads_per_process)**
 
 ### Docker network
 
@@ -209,14 +209,14 @@ Use if a different userid (UID) is required.
 
 The following software programs need to be installed:
 
-1. [git](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-git.md)
-1. [make](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-make.md)
-1. [docker](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-docker.md)
+1. [git](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-git.md)
+1. [make](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-make.md)
+1. [docker](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-docker.md)
 
 ### Clone repository
 
 For more information on environment variables,
-see [Environment Variables](https://github.com/Senzing/knowledge-base/blob/master/lists/environment-variables.md).
+see [Environment Variables](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md).
 
 1. Set these environment variable values:
 
@@ -227,7 +227,7 @@ see [Environment Variables](https://github.com/Senzing/knowledge-base/blob/maste
     export GIT_REPOSITORY_DIR="${GIT_ACCOUNT_DIR}/${GIT_REPOSITORY}"
     ```
 
-1. Follow steps in [clone-repository](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/clone-repository.md) to install the Git repository.
+1. Follow steps in [clone-repository](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/clone-repository.md) to install the Git repository.
 
 ### Build docker image for development
 
