@@ -40,8 +40,6 @@ optional arguments:
     1. [Run from command line](#run-from-command-line)
 1. [Demonstrate using Docker](#demonstrate-using-docker)
     1. [Configuration](#configuration)
-    1. [Docker network](#docker-network)
-    1. [Docker user](#docker-user)
     1. [Run docker container](#run-docker-container)
 1. [References](#references)
 
