@@ -1,2 +1,1 @@
-# Errors, Warnings, and Info messages
-
+# stream-logger errors
