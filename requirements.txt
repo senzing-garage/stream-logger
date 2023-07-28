@@ -1,3 +1,3 @@
-boto3==1.28.12
+boto3==1.28.14
 confluent_kafka==2.2.0
 pika==1.3.2
