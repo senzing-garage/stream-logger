@@ -1,5 +1,17 @@
 # stream-logger
 
+If you are beginning your journey with
+[Senzing](https://senzing.com/),
+please start with
+[Senzing Quick Start guides](https://docs.senzing.com/quickstart/).
+
+You are in the
+[Senzing Garage](https://github.com/senzing-garage)
+where projects are "tinkered" on.
+Although this GitHub repository may help you understand an approach to using Senzing,
+it's not considered to be "production ready" and is not considered to be part of the Senzing product.
+Heck, it may not even be appropriate for your application of Senzing!
+
 ## Overview
 
 The [stream-logger.py](stream-logger.py) python script consumes data
@@ -16,7 +28,7 @@ usage: stream-logger.py [-h]
                         ...
 
 Log contents from a stream. For more information, see
-https://github.com/senzing/stream-logger
+https://github.com/senzing-garage/stream-logger
 
 positional arguments:
   {kafka,rabbitmq,sleep,version,docker-acceptance-test}
@@ -46,17 +58,17 @@ optional arguments:
 ### Legend
 
 1. :thinking: - A "thinker" icon means that a little extra thinking may be required.
-   Perhaps you'll need to make some choices.
+   Perhaps there are some choices to be made.
    Perhaps it's an optional step.
 1. :pencil2: - A "pencil" icon means that the instructions may need modification before performing.
 1. :warning: - A "warning" icon means that something tricky is happening, so pay attention.
 
-## Expectations
+### Expectations
 
 - **Space:** This repository and demonstration require 6 GB free disk space.
 - **Time:** Budget 40 minutes to get the demonstration up-and-running, depending on CPU and network speeds.
 - **Background knowledge:** This repository assumes a working knowledge of:
-  - [Docker](https://github.com/Senzing/knowledge-base/blob/main/WHATIS/docker.md)
+  - [Docker](https://github.com/senzing-garage/knowledge-base/blob/main/WHATIS/docker.md)
 
 ## Demonstrate using Command Line
 
@@ -82,22 +94,22 @@ optional arguments:
 
 Configuration values specified by environment variable or command line parameter.
 
-- **[SENZING_DEBUG](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_debug)**
-- **[SENZING_KAFKA_BOOTSTRAP_SERVER](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_kafka_bootstrap_server)**
-- **[SENZING_KAFKA_GROUP](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_kafka_group)**
-- **[SENZING_KAFKA_TOPIC](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_kafka_topic)**
-- **[SENZING_LOG_LEVEL](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_log_level)**
-- **[SENZING_MONITORING_PERIOD_IN_SECONDS](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_monitoring_period_in_seconds)**
-- **[SENZING_NETWORK](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_network)**
-- **[SENZING_RABBITMQ_HOST](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_host)**
-- **[SENZING_RABBITMQ_PASSWORD](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_password)**
-- **[SENZING_RABBITMQ_PREFETCH_COUNT](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_prefetch_count)**
-- **[SENZING_RABBITMQ_QUEUE](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_queue)**
-- **[SENZING_RABBITMQ_USERNAME](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_username)**
-- **[SENZING_RUNAS_USER](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_runas_user)**
-- **[SENZING_SLEEP_TIME_IN_SECONDS](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_sleep_time_in_seconds)**
-- **[SENZING_SUBCOMMAND](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_subcommand)**
-- **[SENZING_THREADS_PER_PROCESS](https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_threads_per_process)**
+- **[SENZING_DEBUG](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_debug)**
+- **[SENZING_KAFKA_BOOTSTRAP_SERVER](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_kafka_bootstrap_server)**
+- **[SENZING_KAFKA_GROUP](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_kafka_group)**
+- **[SENZING_KAFKA_TOPIC](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_kafka_topic)**
+- **[SENZING_LOG_LEVEL](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_log_level)**
+- **[SENZING_MONITORING_PERIOD_IN_SECONDS](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_monitoring_period_in_seconds)**
+- **[SENZING_NETWORK](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_network)**
+- **[SENZING_RABBITMQ_HOST](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_host)**
+- **[SENZING_RABBITMQ_PASSWORD](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_password)**
+- **[SENZING_RABBITMQ_PREFETCH_COUNT](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_prefetch_count)**
+- **[SENZING_RABBITMQ_QUEUE](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_queue)**
+- **[SENZING_RABBITMQ_USERNAME](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_rabbitmq_username)**
+- **[SENZING_RUNAS_USER](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_runas_user)**
+- **[SENZING_SLEEP_TIME_IN_SECONDS](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_sleep_time_in_seconds)**
+- **[SENZING_SUBCOMMAND](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_subcommand)**
+- **[SENZING_THREADS_PER_PROCESS](https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_threads_per_process)**
 
 ### Run docker container
 
