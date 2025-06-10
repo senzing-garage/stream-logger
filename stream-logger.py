@@ -33,25 +33,21 @@ import pika
 
 __all__ = []
 __version__ = "1.1.6"  # See https://www.python.org/dev/peps/pep-0396/
-__date__ = '2020-02-06'
-__updated__ = '2023-09-30'
+__date__ = "2020-02-06"
+__updated__ = "2023-09-30"
 
 SENZING_PRODUCT_ID = "5011"  # See https://github.com/senzing-garage/knowledge-base/blob/main/lists/senzing-product-ids.md
-log_format = '%(asctime)s %(message)s'
+log_format = "%(asctime)s %(message)s"
 
 # The "configuration_locator" describes where configuration variables are in:
 # 1) Command line options, 2) Environment variables, 3) Configuration files, 4) Default values
 
 configuration_locator = {
-    "debug": {
-        "default": False,
-        "env": "SENZING_DEBUG",
-        "cli": "debug"
-    },
+    "debug": {"default": False, "env": "SENZING_DEBUG", "cli": "debug"},
     "delay_in_seconds": {
         "default": 0,
         "env": "SENZING_DELAY_IN_SECONDS",
-        "cli": "delay-in-seconds"
+        "cli": "delay-in-seconds",
     },
     "kafka_bootstrap_server": {
         "default": "localhost:9092",
@@ -61,12 +57,12 @@ configuration_locator = {
     "kafka_group": {
         "default": "senzing-kafka-group",
         "env": "SENZING_KAFKA_GROUP",
-        "cli": "kafka-group"
+        "cli": "kafka-group",
     },
     "kafka_topic": {
         "default": "senzing-kafka-topic",
         "env": "SENZING_KAFKA_TOPIC",
-        "cli": "kafka-topic"
+        "cli": "kafka-topic",
     },
     "monitoring_period_in_seconds": {
         "default": 60 * 10,
@@ -106,12 +102,12 @@ configuration_locator = {
     "sleep_time_in_seconds": {
         "default": 0,
         "env": "SENZING_SLEEP_TIME_IN_SECONDS",
-        "cli": "sleep-time-in-seconds"
+        "cli": "sleep-time-in-seconds",
     },
     "sqs_queue_url": {
         "default": None,
         "env": "SENZING_SQS_QUEUE_URL",
-        "cli": "sqs-queue-url"
+        "cli": "sqs-queue-url",
     },
     "subcommand": {
         "default": None,
@@ -126,8 +122,7 @@ configuration_locator = {
 
 # Enumerate keys in 'configuration_locator' that should not be printed to the log.
 
-keys_to_redact = [
-]
+keys_to_redact = []
 
 # -----------------------------------------------------------------------------
 # Define argument parser
@@ -135,92 +130,92 @@ keys_to_redact = [
 
 
 def get_parser():
-    ''' Parse commandline arguments. '''
+    """Parse commandline arguments."""
 
     subcommands = {
-        'kafka': {
-            "help": 'Read JSON Lines from Apache Kafka topic.',
+        "kafka": {
+            "help": "Read JSON Lines from Apache Kafka topic.",
             "argument_aspects": ["common"],
             "arguments": {
                 "--kafka-bootstrap-server": {
                     "dest": "kafka_bootstrap_server",
                     "metavar": "SENZING_KAFKA_BOOTSTRAP_SERVER",
-                    "help": "Kafka bootstrap server. Default: localhost:9092"
+                    "help": "Kafka bootstrap server. Default: localhost:9092",
                 },
                 "--kafka-group": {
                     "dest": "kafka_group",
                     "metavar": "SENZING_KAFKA_GROUP",
-                    "help": "Kafka group. Default: senzing-kafka-group"
+                    "help": "Kafka group. Default: senzing-kafka-group",
                 },
                 "--kafka-topic": {
                     "dest": "kafka_topic",
                     "metavar": "SENZING_KAFKA_TOPIC",
-                    "help": "Kafka topic. Default: senzing-kafka-topic"
+                    "help": "Kafka topic. Default: senzing-kafka-topic",
                 },
             },
         },
-        'rabbitmq': {
-            "help": 'Read JSON Lines from RabbitMQ queue.',
+        "rabbitmq": {
+            "help": "Read JSON Lines from RabbitMQ queue.",
             "argument_aspects": ["common"],
             "arguments": {
                 "--rabbitmq-host": {
                     "dest": "rabbitmq_host",
                     "metavar": "SENZING_RABBITMQ_HOST",
-                    "help": "RabbitMQ host. Default: localhost:5672"
+                    "help": "RabbitMQ host. Default: localhost:5672",
                 },
                 "--rabbitmq-password": {
                     "dest": "rabbitmq_password",
                     "metavar": "SENZING_RABBITMQ_PASSWORD",
-                    "help": "RabbitMQ password. Default: bitnami"
+                    "help": "RabbitMQ password. Default: bitnami",
                 },
                 "--rabbitmq-prefetch-count": {
                     "dest": "rabbitmq_prefetch_count",
                     "metavar": "SENZING_RABBITMQ_PREFETCH_COUNT",
-                    "help": "RabbitMQ prefetch-count. Default: 50"
+                    "help": "RabbitMQ prefetch-count. Default: 50",
                 },
                 "--rabbitmq-queue": {
                     "dest": "rabbitmq_queue",
                     "metavar": "SENZING_RABBITMQ_QUEUE",
-                    "help": "RabbitMQ queue. Default: senzing-rabbitmq-queue"
+                    "help": "RabbitMQ queue. Default: senzing-rabbitmq-queue",
                 },
                 "--rabbitmq-use-existing-entities": {
                     "dest": "rabbitmq_use_existing_entities",
                     "metavar": "SENZING_RABBITMQ_USE_EXISTING_ENTITIES",
-                    "help": "Connect to an existing queue using its settings. An error is thrown if the queue does not exist. If False, it will create the queue if it does not exist. If it exists, then it will attempt to connect, checking the settings match. Default: True"
+                    "help": "Connect to an existing queue using its settings. An error is thrown if the queue does not exist. If False, it will create the queue if it does not exist. If it exists, then it will attempt to connect, checking the settings match. Default: True",
                 },
                 "--rabbitmq-username": {
                     "dest": "rabbitmq_username",
                     "metavar": "SENZING_RABBITMQ_USERNAME",
-                    "help": "RabbitMQ username. Default: user"
+                    "help": "RabbitMQ username. Default: user",
                 },
             },
         },
-        'sqs': {
-            "help": 'Read JSON Lines from AWS SQS queue.',
+        "sqs": {
+            "help": "Read JSON Lines from AWS SQS queue.",
             "argument_aspects": ["common"],
             "arguments": {
                 "--sqs-queue-url": {
                     "dest": "sqs_queue_url",
                     "metavar": "SENZING_SQS_QUEUE_URL",
-                    "help": "AWS SQS URL. Default: none"
+                    "help": "AWS SQS URL. Default: none",
                 },
             },
         },
-        'sleep': {
-            "help": 'Do nothing but sleep. For Docker testing.',
+        "sleep": {
+            "help": "Do nothing but sleep. For Docker testing.",
             "arguments": {
                 "--sleep-time-in-seconds": {
                     "dest": "sleep_time_in_seconds",
                     "metavar": "SENZING_SLEEP_TIME_IN_SECONDS",
-                    "help": "Sleep time in seconds. DEFAULT: 0 (infinite)"
+                    "help": "Sleep time in seconds. DEFAULT: 0 (infinite)",
                 },
             },
         },
-        'version': {
-            "help": 'Print version of program.',
+        "version": {
+            "help": "Print version of program.",
         },
-        'docker-acceptance-test': {
-            "help": 'For Docker acceptance testing.',
+        "docker-acceptance-test": {
+            "help": "For Docker acceptance testing.",
         },
     }
 
@@ -229,47 +224,53 @@ def get_parser():
             "--debug": {
                 "dest": "debug",
                 "action": "store_true",
-                "help": "Enable debugging. (SENZING_DEBUG) Default: False"
+                "help": "Enable debugging. (SENZING_DEBUG) Default: False",
             },
             "--delay-in-seconds": {
                 "dest": "delay_in_seconds",
                 "metavar": "SENZING_DELAY_IN_SECONDS",
-                "help": "Delay before processing in seconds. DEFAULT: 0"
+                "help": "Delay before processing in seconds. DEFAULT: 0",
             },
             "--monitoring-period-in-seconds": {
                 "dest": "monitoring_period_in_seconds",
                 "metavar": "SENZING_MONITORING_PERIOD_IN_SECONDS",
-                "help": "Period, in seconds, between monitoring reports. Default: 600"
+                "help": "Period, in seconds, between monitoring reports. Default: 600",
             },
             "--threads-per-process": {
                 "dest": "threads_per_process",
                 "metavar": "SENZING_THREADS_PER_PROCESS",
-                "help": "Number of threads per process. Default: 4"
+                "help": "Number of threads per process. Default: 4",
             },
         },
     }
     # Augment "subcommands" variable with arguments specified by aspects.
 
     for subcommand, subcommand_value in subcommands.items():
-        if 'argument_aspects' in subcommand_value:
-            for aspect in subcommand_value['argument_aspects']:
-                if 'arguments' not in subcommands[subcommand]:
-                    subcommands[subcommand]['arguments'] = {}
+        if "argument_aspects" in subcommand_value:
+            for aspect in subcommand_value["argument_aspects"]:
+                if "arguments" not in subcommands[subcommand]:
+                    subcommands[subcommand]["arguments"] = {}
                 arguments = argument_aspects.get(aspect, {})
                 for argument, argument_value in arguments.items():
-                    subcommands[subcommand]['arguments'][argument] = argument_value
+                    subcommands[subcommand]["arguments"][argument] = argument_value
 
-    parser = argparse.ArgumentParser(prog="init-container.py", description="Initialize Senzing installation. For more information, see https://github.com/senzing-garage/docker-init-container")
-    subparsers = parser.add_subparsers(dest='subcommand', help='Subcommands (SENZING_SUBCOMMAND):')
+    parser = argparse.ArgumentParser(
+        prog="init-container.py",
+        description="Initialize Senzing installation. For more information, see https://github.com/senzing-garage/docker-init-container",
+    )
+    subparsers = parser.add_subparsers(
+        dest="subcommand", help="Subcommands (SENZING_SUBCOMMAND):"
+    )
 
     for subcommand_key, subcommand_values in subcommands.items():
-        subcommand_help = subcommand_values.get('help', "")
-        subcommand_arguments = subcommand_values.get('arguments', {})
+        subcommand_help = subcommand_values.get("help", "")
+        subcommand_arguments = subcommand_values.get("arguments", {})
         subparser = subparsers.add_parser(subcommand_key, help=subcommand_help)
         for argument_key, argument_values in subcommand_arguments.items():
             subparser.add_argument(argument_key, **argument_values)
 
     return parser
+
 
 # -----------------------------------------------------------------------------
 # Message handling
@@ -324,7 +325,9 @@ message_dictionary = {
 
 def message(index, *args):
     index_string = str(index)
-    template = message_dictionary.get(index_string, "No message for index {0}.".format(index_string))
+    template = message_dictionary.get(
+        index_string, "No message for index {0}.".format(index_string)
+    )
     return template.format(*args)
 
 
@@ -350,7 +353,7 @@ def message_debug(index, *args):
 
 
 def get_exception():
-    ''' Get details about an exception. '''
+    """Get details about an exception."""
     exception_type, exception_object, traceback = sys.exc_info()
     frame = traceback.tb_frame
     line_number = traceback.tb_lineno
@@ -366,31 +369,32 @@ def get_exception():
         "traceback": traceback,
     }
 
+
 # -----------------------------------------------------------------------------
 # Configuration
 # -----------------------------------------------------------------------------
 
 
 def get_configuration(args):
-    ''' Order of precedence: CLI, OS environment variables, INI file, default. '''
+    """Order of precedence: CLI, OS environment variables, INI file, default."""
     result = {}
 
     # Copy default values into configuration dictionary.
 
     for key, value in list(configuration_locator.items()):
-        result[key] = value.get('default', None)
+        result[key] = value.get("default", None)
 
     # "Prime the pump" with command line args. This will be done again as the last step.
 
     for key, value in list(args.__dict__.items()):
-        new_key = key.format(subcommand.replace('-', '_'))
+        new_key = key.format(subcommand.replace("-", "_"))
         if value:
             result[new_key] = value
 
     # Copy OS environment variables into configuration dictionary.
 
     for key, value in list(configuration_locator.items()):
-        os_env_var = value.get('env', None)
+        os_env_var = value.get("env", None)
         if os_env_var:
             os_env_value = os.getenv(os_env_var, None)
             if os_env_value:
@@ -399,31 +403,31 @@ def get_configuration(args):
     # Copy 'args' into configuration dictionary.
 
     for key, value in list(args.__dict__.items()):
-        new_key = key.format(subcommand.replace('-', '_'))
+        new_key = key.format(subcommand.replace("-", "_"))
         if value:
             result[new_key] = value
 
     # Add program information.
 
-    result['program_version'] = __version__
-    result['program_updated'] = __updated__
+    result["program_version"] = __version__
+    result["program_updated"] = __updated__
 
     # Special case: subcommand from command-line
 
     if args.subcommand:
-        result['subcommand'] = args.subcommand
+        result["subcommand"] = args.subcommand
 
     # Special case: Change boolean strings to booleans.
 
     booleans = [
-        'debug',
-        'rabbitmq_use_existing_entities',
+        "debug",
+        "rabbitmq_use_existing_entities",
     ]
     for boolean in booleans:
         boolean_value = result.get(boolean)
         if isinstance(boolean_value, str):
             boolean_value_lower_case = boolean_value.lower()
-            if boolean_value_lower_case in ['true', '1', 't', 'y', 'yes']:
+            if boolean_value_lower_case in ["true", "1", "t", "y", "yes"]:
                 result[boolean] = True
             else:
                 result[boolean] = False
@@ -441,22 +445,22 @@ def get_configuration(args):
 
     # Initialize counters.
 
-    result['counter_processed_messages'] = 0
+    result["counter_processed_messages"] = 0
 
     return result
 
 
 def validate_configuration(config):
-    ''' Check aggregate configuration from commandline options, environment variables, config files, and defaults. '''
+    """Check aggregate configuration from commandline options, environment variables, config files, and defaults."""
 
     user_warning_messages = []
     user_error_messages = []
 
     # Perform subcommand specific checking.
 
-    subcommand = config.get('subcommand')
+    subcommand = config.get("subcommand")
 
-    if subcommand in ['rabbitmq', 'kafka', 'sqs']:
+    if subcommand in ["rabbitmq", "kafka", "sqs"]:
         pass
 
     # Log warning messages.
@@ -481,7 +485,7 @@ def validate_configuration(config):
 
 
 def redact_configuration(config):
-    ''' Return a shallow copy of config with certain keys removed. '''
+    """Return a shallow copy of config with certain keys removed."""
     result = config.copy()
     for key in keys_to_redact:
         try:
@@ -489,6 +493,7 @@ def redact_configuration(config):
         except:
             pass
     return result
+
 
 # -----------------------------------------------------------------------------
 # Class: ReadThread
@@ -501,6 +506,7 @@ class ReadThread(threading.Thread):
         threading.Thread.__init__(self)
         self.config = config
 
+
 # -----------------------------------------------------------------------------
 # Class: ReadKafkaThread
 # -----------------------------------------------------------------------------
@@ -512,18 +518,18 @@ class ReadKafkaThread(ReadThread):
         super().__init__(config)
 
     def run(self):
-        '''Process for reading lines from Kafka and feeding them to a process_function() function.'''
+        """Process for reading lines from Kafka and feeding them to a process_function() function."""
 
         logging.info(message_info(129, threading.current_thread().name))
 
         # Create Kafka client.
 
         consumer_configuration = {
-            'bootstrap.servers': self.config.get('kafka_bootstrap_server'),
-            'group.id': self.config.get("kafka_group"),
-            'enable.auto.commit': False,
-            'auto.offset.reset': 'earliest'
-            }
+            "bootstrap.servers": self.config.get("kafka_bootstrap_server"),
+            "group.id": self.config.get("kafka_group"),
+            "enable.auto.commit": False,
+            "auto.offset.reset": "earliest",
+        }
         consumer = confluent_kafka.Consumer(consumer_configuration)
         consumer.subscribe([self.config.get("kafka_topic")])
 
@@ -541,7 +547,10 @@ class ReadKafkaThread(ReadThread):
             if kafka_message is None:
                 continue
             if kafka_message.error():
-                if kafka_message.error().code() == confluent_kafka.KafkaError._PARTITION_EOF:
+                if (
+                    kafka_message.error().code()
+                    == confluent_kafka.KafkaError._PARTITION_EOF
+                ):
                     continue
                 else:
                     logging.error(message_error(722, kafka_message.error()))
@@ -554,8 +563,12 @@ class ReadKafkaThread(ReadThread):
                 continue
             if isinstance(kafka_message_string, bytes):
                 kafka_message_string = kafka_message_string.decode()
-            logging.debug(message_debug(904, threading.current_thread().name, kafka_message_string))
-            self.config['counter_processed_messages'] += 1
+            logging.debug(
+                message_debug(
+                    904, threading.current_thread().name, kafka_message_string
+                )
+            )
+            self.config["counter_processed_messages"] += 1
 
             # Write message to log.
 
@@ -563,6 +576,7 @@ class ReadKafkaThread(ReadThread):
             consumer.commit()
 
         consumer.close()
+
 
 # -----------------------------------------------------------------------------
 # Class: ReadRabbitMQThread
@@ -575,15 +589,15 @@ class ReadRabbitMQThread(ReadThread):
         super().__init__(config)
 
     def callback(self, channel, method, header, body):
-        ''' Called by Pika whenever a message is received. '''
+        """Called by Pika whenever a message is received."""
         jsonline = body.decode()
         logging.debug(message_debug(904, threading.current_thread().name, jsonline))
-        self.config['counter_processed_messages'] += 1
+        self.config["counter_processed_messages"] += 1
         logging.info(message_info(101, jsonline))
         channel.basic_ack(delivery_tag=method.delivery_tag)
 
     def run(self):
-        '''Process for reading lines from RabbitMQ and feeding them to a process_function() function.'''
+        """Process for reading lines from RabbitMQ and feeding them to a process_function() function."""
 
         logging.info(message_info(129, threading.current_thread().name))
 
@@ -600,11 +614,17 @@ class ReadRabbitMQThread(ReadThread):
 
         try:
             credentials = pika.PlainCredentials(rabbitmq_username, rabbitmq_password)
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmq_host, credentials=credentials))
+            connection = pika.BlockingConnection(
+                pika.ConnectionParameters(host=rabbitmq_host, credentials=credentials)
+            )
             channel = connection.channel()
-            channel.queue_declare(queue=rabbitmq_queue, passive=rabbitmq_passive_declare)
+            channel.queue_declare(
+                queue=rabbitmq_queue, passive=rabbitmq_passive_declare
+            )
             channel.basic_qos(prefetch_count=rabbitmq_prefetch_count)
-            channel.basic_consume(on_message_callback=self.callback, queue=rabbitmq_queue)
+            channel.basic_consume(
+                on_message_callback=self.callback, queue=rabbitmq_queue
+            )
         except pika.exceptions.AMQPConnectionError as err:
             exit_error(562, err, rabbitmq_host)
         except BaseException as err:
@@ -616,6 +636,7 @@ class ReadRabbitMQThread(ReadThread):
             channel.start_consuming()
         except pika.exceptions.ChannelClosed:
             logging.info(message_info(130, threading.current_thread().name))
+
 
 # -----------------------------------------------------------------------------
 # Class: ReadSqsThread
@@ -630,7 +651,7 @@ class ReadSqsThread(ReadThread):
         self.sqs = boto3.client("sqs")
 
     def run(self):
-        '''Process for reading lines from SQS and feeding them to a process_function() function.'''
+        """Process for reading lines from SQS and feeding them to a process_function() function."""
 
         logging.info(message_info(129, threading.current_thread().name))
 
@@ -646,7 +667,7 @@ class ReadSqsThread(ReadThread):
                 MaxNumberOfMessages=1,
                 MessageAttributeNames=[],
                 VisibilityTimeout=30,
-                WaitTimeSeconds=20
+                WaitTimeSeconds=20,
             )
 
             # If non-standard SQS output or empty messages, just loop.
@@ -671,13 +692,13 @@ class ReadSqsThread(ReadThread):
             # After successful import into Senzing, tell AWS SQS we're done with message.
 
             self.sqs.delete_message(
-                QueueUrl=self.queue_url,
-                ReceiptHandle=sqs_message_receipt_handle
+                QueueUrl=self.queue_url, ReceiptHandle=sqs_message_receipt_handle
             )
 
             # Count the processing
 
-            self.config['counter_processed_messages'] += 1
+            self.config["counter_processed_messages"] += 1
+
 
 # -----------------------------------------------------------------------------
 # Class: MonitorThread
@@ -692,14 +713,14 @@ class MonitorThread(threading.Thread):
         self.workers = workers
 
     def run(self):
-        '''Periodically monitor what is happening.'''
+        """Periodically monitor what is happening."""
 
         last_processed_records = 0
         last_time = time.time()
 
         # Define monitoring report interval.
 
-        sleep_time_in_seconds = self.config.get('monitoring_period_in_seconds')
+        sleep_time_in_seconds = self.config.get("monitoring_period_in_seconds")
 
         # Sleep-monitor loop.
 
@@ -727,13 +748,15 @@ class MonitorThread(threading.Thread):
             # Calculate times.
 
             now = time.time()
-            uptime = now - self.config.get('start_time', now)
+            uptime = now - self.config.get("start_time", now)
             elapsed_time = now - last_time
 
             # Calculate rates.
 
-            processed_messages_total = self.config['counter_processed_messages']
-            processed_messages_interval = processed_messages_total - last_processed_records
+            processed_messages_total = self.config["counter_processed_messages"]
+            processed_messages_interval = (
+                processed_messages_total - last_processed_records
+            )
             rate_processed_total = int(processed_messages_total / uptime)
             rate_processed_interval = int(processed_messages_interval / elapsed_time)
 
@@ -755,6 +778,7 @@ class MonitorThread(threading.Thread):
             last_processed_records = processed_messages_total
             last_time = now
 
+
 # -----------------------------------------------------------------------------
 # Utility functions
 # -----------------------------------------------------------------------------
@@ -765,9 +789,9 @@ def bootstrap_signal_handler(signal, frame):
 
 
 def create_signal_handler_function(args):
-    ''' Tricky code.  Uses currying technique. Create a function for signal handling.
-        that knows about "args".
-    '''
+    """Tricky code.  Uses currying technique. Create a function for signal handling.
+    that knows about "args".
+    """
 
     def result_function(signal_number, frame):
         logging.info(message_info(298, args))
@@ -777,16 +801,16 @@ def create_signal_handler_function(args):
 
 
 def delay(config):
-    delay_in_seconds = config.get('delay_in_seconds')
+    delay_in_seconds = config.get("delay_in_seconds")
     if delay_in_seconds > 0:
         logging.info(message_info(120, delay_in_seconds))
         time.sleep(delay_in_seconds)
 
 
 def entry_template(config):
-    ''' Format of entry message. '''
+    """Format of entry message."""
     debug = config.get("debug", False)
-    config['start_time'] = time.time()
+    config["start_time"] = time.time()
     if debug:
         final_config = config
     else:
@@ -796,11 +820,11 @@ def entry_template(config):
 
 
 def exit_template(config):
-    ''' Format of exit message. '''
+    """Format of exit message."""
     debug = config.get("debug", False)
     stop_time = time.time()
-    config['stop_time'] = stop_time
-    config['elapsed_time'] = stop_time - config.get('start_time', stop_time)
+    config["stop_time"] = stop_time
+    config["elapsed_time"] = stop_time - config.get("start_time", stop_time)
     if debug:
         final_config = config
     else:
@@ -810,15 +834,16 @@ def exit_template(config):
 
 
 def exit_error(index, *args):
-    ''' Log error message and exit program. '''
+    """Log error message and exit program."""
     logging.error(message_error(index, *args))
     logging.error(message_error(698))
     sys.exit(1)
 
 
 def exit_silently():
-    ''' Exit program. '''
+    """Exit program."""
     sys.exit(0)
+
 
 # -----------------------------------------------------------------------------
 # dohelper_* functions
@@ -826,7 +851,7 @@ def exit_silently():
 
 
 def dohelper_thread_runner(args, threadClass):
-    ''' Performs threadClass. '''
+    """Performs threadClass."""
 
     # Get context from CLI, environment variables, and ini files.
 
@@ -842,7 +867,7 @@ def dohelper_thread_runner(args, threadClass):
 
     # Pull values from configuration.
 
-    threads_per_process = config.get('threads_per_process')
+    threads_per_process = config.get("threads_per_process")
 
     # Create queue reader threads for master process.
 
@@ -866,7 +891,7 @@ def dohelper_thread_runner(args, threadClass):
 
     # Sleep, if requested.
 
-    sleep_time_in_seconds = config.get('sleep_time_in_seconds')
+    sleep_time_in_seconds = config.get("sleep_time_in_seconds")
     if sleep_time_in_seconds > 0:
         logging.info(message_info(152, sleep_time_in_seconds))
         time.sleep(sleep_time_in_seconds)
@@ -885,6 +910,7 @@ def dohelper_thread_runner(args, threadClass):
 
     logging.info(exit_template(config))
 
+
 # -----------------------------------------------------------------------------
 # do_* functions
 #   Common function signature: do_XXX(args)
@@ -892,7 +918,7 @@ def dohelper_thread_runner(args, threadClass):
 
 
 def do_docker_acceptance_test(args):
-    ''' For use with Docker acceptance testing. '''
+    """For use with Docker acceptance testing."""
 
     # Get context from CLI, environment variables, and ini files.
 
@@ -908,19 +934,19 @@ def do_docker_acceptance_test(args):
 
 
 def do_kafka(args):
-    ''' Read from Kafka. '''
+    """Read from Kafka."""
 
     dohelper_thread_runner(args, ReadKafkaThread)
 
 
 def do_rabbitmq(args):
-    ''' Read from rabbitmq. '''
+    """Read from rabbitmq."""
 
     dohelper_thread_runner(args, ReadRabbitMQThread)
 
 
 def do_sleep(args):
-    ''' Sleep.  Used for debugging. '''
+    """Sleep.  Used for debugging."""
 
     # Get context from CLI, environment variables, and ini files.
 
@@ -932,7 +958,7 @@ def do_sleep(args):
 
     # Pull values from configuration.
 
-    sleep_time_in_seconds = config.get('sleep_time_in_seconds')
+    sleep_time_in_seconds = config.get("sleep_time_in_seconds")
 
     # Sleep
 
@@ -952,15 +978,16 @@ def do_sleep(args):
 
 
 def do_sqs(args):
-    ''' Read from AWS SQS. '''
+    """Read from AWS SQS."""
 
     dohelper_thread_runner(args, ReadSqsThread)
 
 
 def do_version(args):
-    ''' Log version information. '''
+    """Log version information."""
 
     logging.info(message_info(294, __version__, __updated__))
+
 
 # -----------------------------------------------------------------------------
 # Main
@@ -978,7 +1005,7 @@ if __name__ == "__main__":
         "fatal": logging.FATAL,
         "warning": logging.WARNING,
         "error": logging.ERROR,
-        "critical": logging.CRITICAL
+        "critical": logging.CRITICAL,
     }
 
     log_level_parameter = os.getenv("SENZING_LOG_LEVEL", "info").lower()
@@ -1015,7 +1042,7 @@ if __name__ == "__main__":
 
     # Transform subcommand from CLI parameter to function name string.
 
-    subcommand_function_name = "do_{0}".format(subcommand.replace('-', '_'))
+    subcommand_function_name = "do_{0}".format(subcommand.replace("-", "_"))
 
     # Test to see if function exists in the code.
 
